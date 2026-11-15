@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:fragment="head(title)">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${title} + ' — AQI Monitoring & Prediction System'">AQI Monitoring & Prediction System</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <!-- Chart.js for visualizations -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.2/dist/chart.umd.min.js"></script>
+    <script th:src="@{/js/main.js}" defer></script>
+</head>
+<body>
+
+<!-- Navigation Bar Fragment -->
+<nav th:fragment="navbar(activePage)" class="navbar">
+    <a th:href="@{/}" class="nav-brand">
+        <div class="brand-icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="12" r="10"></circle>
+                <line x1="2" y1="12" x2="22" y2="12"></line>
+                <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path>
+            </svg>
+        </div>
+        <span>AQI Monitor &amp; Predict</span>
+    </a>
+
+    <ul class="nav-links">
+        <li><a th:href="@{/}" th:classappend="${activePage == 'dashboard' ? 'active' : ''}">Dashboard</a></li>
+        <li sec:authorize="hasAnyRole('ADMIN', 'OPERATOR')">
+            <a th:href="@{/data-entry}" th:classappend="${activePage == 'data-entry' ? 'active' : ''}">Data Entry</a>
+        </li>
+        <li sec:authorize="hasAnyRole('ADMIN', 'ANALYST')">
+            <a th:href="@{/reports}" th:classappend="${activePage == 'reports' ? 'active' : ''}">Reports</a>
+        </li>
+        <li>
+            <a th:href="@{/predictions}" th:classappend="${activePage == 'predictions' ? 'active' : ''}">Predictions</a>
+        </li>
+        <li>
+            <a th:href="@{/alerts}" th:classappend="${activePage == 'alerts' ? 'active' : ''}">Alerts</a>
+        </li>
+        <li sec:authorize="hasRole('ADMIN')">
+            <a th:href="@{/admin}" th:classappend="${activePage == 'admin' ? 'active' : ''}">Admin</a>
+        </li>
+    </ul>
+
+    <div class="nav-user">
+        <span class="user-badge" sec:authentication="name">User</span>
+        <form th:action="@{/logout}" method="post" style="display:inline;">
+            <button type="submit" class="logout-btn">Logout</button>
+        </form>
+    </div>
+</nav>
+
+<!-- Team Footer Fragment -->
+<footer th:fragment="footer" class="team-footer">
+    <div>
+        <strong>AQI Monitoring &amp; Prediction System</strong> — Big Coders &bull; Group 3Q15
+    </div>
+    <div class="team-members">
+        <span>Aryan Sharma</span>
+        <span>&bull;</span>
+        <span>Aniket Raj</span>
+        <span>&bull;</span>
+        <span>Chirag Lamba</span>
+    </div>
+</footer>
+
+</body>
+</html>
+

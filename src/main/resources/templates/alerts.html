@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:replace="~{fragments/layout :: head('System Alerts')}"></head>
+<body>
+
+<nav th:replace="~{fragments/layout :: navbar('alerts')}"></nav>
+
+<main class="page">
+    <div class="page-header" style="display: flex; justify-content: space-between; align-items: flex-end; flex-wrap: wrap; gap: 16px;">
+        <div>
+            <h1>Environmental &amp; Sensor Alerts</h1>
+            <p>Threshold alerts and sensor data-quality warnings generated automatically by database triggers and Java services</p>
+        </div>
+
+        <!-- Filter Form -->
+        <form th:action="@{/alerts}" method="get" style="display: flex; gap: 10px; align-items: center;">
+            <select name="severity" class="form-control" style="width: 150px;" onchange="this.form.submit()">
+                <option value="ALL">All Severities</option>
+                <option value="Critical" th:selected="${severity == 'Critical'}">Critical</option>
+                <option value="High" th:selected="${severity == 'High'}">High</option>
+                <option value="Medium" th:selected="${severity == 'Medium'}">Medium</option>
+                <option value="Low" th:selected="${severity == 'Low'}">Low</option>
+            </select>
+
+            <select name="resolved" class="form-control" style="width: 150px;" onchange="this.form.submit()">
+                <option value="">All Statuses</option>
+                <option value="false" th:selected="${resolved != null and !resolved}">Active (Unresolved)</option>
+                <option value="true" th:selected="${resolved != null and resolved}">Resolved</option>
+            </select>
+        </form>
+    </div>
+
+    <div th:if="${successMessage}" class="alert-banner alert-success" th:text="${successMessage}"></div>
+    <div th:if="${errorMessage}" class="alert-banner alert-error" th:text="${errorMessage}"></div>
+
+    <div class="glass-card">
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>Alert ID</th>
+                    <th>Severity</th>
+                    <th>Type</th>
+                    <th>Station &amp; City</th>
+                    <th>Message</th>
+                    <th>Timestamp</th>
+                    <th>Status</th>
+                    <th sec:authorize="hasRole('ADMIN')">Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:if="${#lists.isEmpty(alerts)}">
+                    <td colspan="8" style="text-align: center; padding: 28px; color: var(--text-muted);">
+                        No alerts matching current filters.
+                    </td>
+                </tr>
+                <tr th:each="al : ${alerts}">
+                    <td th:text="${'#' + al.alertId}">#1</td>
+                    <td>
+                        <span class="badge"
+                              th:classappend="${al.severity == 'Critical' ? 'sev-critical' :
+                                               (al.severity == 'High' ? 'sev-high' :
+                                               (al.severity == 'Medium' ? 'sev-medium' : 'sev-low'))}"
+                              th:text="${al.severity}">High</span>
+                    </td>
+                    <td style="font-size: 0.82rem; color: var(--text-secondary);" th:text="${al.alertType}">AQI_Threshold</td>
+                    <td>
+                        <div style="font-weight: 600; color: var(--text-primary);" th:text="${al.stationName}">Station</div>
+                        <div style="font-size: 0.75rem; color: var(--text-muted);" th:text="${al.cityName}">City</div>
+                    </td>
+                    <td style="max-width: 440px; font-size: 0.85rem; color: var(--text-primary);" th:text="${al.message}">
+                        Alert message details
+                    </td>
+                    <td style="font-size: 0.8rem; color: var(--text-muted);" th:text="${#temporals.format(al.alertTimestamp, 'dd MMM yyyy HH:mm')}">
+                        Date
+                    </td>
+                    <td>
+                        <span th:if="${!al.resolved}" style="color: #F87171; font-size: 0.8rem; font-weight: 600;">Active</span>
+                        <span th:if="${al.resolved}" style="color: #4ADE80; font-size: 0.8rem; font-weight: 600;">Resolved</span>
+                    </td>
+                    <td sec:authorize="hasRole('ADMIN')">
+                        <form th:if="${!al.resolved}" th:action="@{'/alerts/' + ${al.alertId} + '/resolve'}" method="post">
+                            <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+                            <button type="submit" class="btn btn-outline" style="padding: 4px 10px; font-size: 0.75rem;">
+                                Resolve
+                            </button>
+                        </form>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</main>
+
+<footer th:replace="~{fragments/layout :: footer}"></footer>
+
+</body>
+</html>
+

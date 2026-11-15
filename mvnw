@@ -1,0 +1,11 @@
+#!/bin/sh
+# Maven wrapper redirecting to installed Maven 3.9.9 or system mvn
+if command -v mvn >/dev/null 2>&1; then
+    exec mvn "$@"
+elif [ -x "$HOME/.maven/apache-maven-3.9.9/bin/mvn" ]; then
+    exec "$HOME/.maven/apache-maven-3.9.9/bin/mvn" "$@"
+else
+    echo "Maven not found. Please install Maven or check ~/.maven/apache-maven-3.9.9"
+    exit 1
+fi
+

@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign In — AQI Monitoring &amp; Prediction System</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <style>
+        .login-wrapper {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 24px;
+            background: radial-gradient(circle at 50% 20%, rgba(99, 102, 241, 0.12), transparent 50%), var(--bg-primary);
+        }
+        .login-card {
+            width: 100%;
+            max-width: 440px;
+        }
+        .login-header {
+            text-align: center;
+            margin-bottom: 28px;
+        }
+        .demo-accounts {
+            margin-top: 24px;
+            padding-top: 20px;
+            border-top: 1px solid var(--border-color);
+            font-size: 0.8rem;
+            color: var(--text-muted);
+        }
+        .demo-pill {
+            display: inline-block;
+            padding: 3px 8px;
+            border-radius: 6px;
+            background: rgba(255, 255, 255, 0.05);
+            margin: 2px;
+            font-family: monospace;
+            color: var(--text-secondary);
+        }
+    </style>
+</head>
+<body>
+
+<div class="login-wrapper">
+    <div class="glass-card login-card">
+        <div class="login-header">
+            <div class="brand-icon" style="margin: 0 auto 16px auto; width: 44px; height: 44px;">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="2.2">
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <line x1="2" y1="12" x2="22" y2="12"></line>
+                    <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path>
+                </svg>
+            </div>
+            <h1 style="font-size: 1.5rem; font-weight: 800; color: var(--text-primary);">Sign In</h1>
+            <p style="color: var(--text-secondary); font-size: 0.88rem; margin-top: 4px;">AQI Monitoring &amp; Prediction System</p>
+        </div>
+
+        <div th:if="${errorMessage}" class="alert-banner alert-error" th:text="${errorMessage}"></div>
+        <div th:if="${logoutMessage}" class="alert-banner alert-success" th:text="${logoutMessage}"></div>
+
+        <form th:action="@{/login}" method="post">
+            <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+
+            <div class="form-group">
+                <label for="username">Username</label>
+                <input type="text" id="username" name="username" class="form-control" placeholder="Enter username" required autofocus />
+            </div>
+
+            <div class="form-group">
+                <label for="password">Password</label>
+                <input type="password" id="password" name="password" class="form-control" placeholder="Enter password" required />
+            </div>
+
+            <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 8px;">
+                Sign In to Platform
+            </button>
+        </form>
+
+        <div class="demo-accounts">
+            <p style="font-weight: 600; margin-bottom: 8px; color: var(--text-secondary);">Demo Testing Credentials:</p>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 6px;">
+                <div><span class="demo-pill">admin</span> / <span class="demo-pill">admin123</span> (Admin)</div>
+                <div><span class="demo-pill">analyst</span> / <span class="demo-pill">analyst123</span> (Analyst)</div>
+                <div><span class="demo-pill">operator</span> / <span class="demo-pill">operator123</span> (Operator)</div>
+                <div><span class="demo-pill">viewer</span> / <span class="demo-pill">viewer123</span> (Viewer)</div>
+            </div>
+            <p style="margin-top: 10px; font-style: italic; font-size: 0.75rem;">Big Coders &bull; Group 3Q15 (Aryan Sharma, Aniket Raj, Chirag Lamba)</p>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>
+

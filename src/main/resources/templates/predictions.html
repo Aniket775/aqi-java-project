@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('AQI Predictions')}"></head>
+<body>
+
+<nav th:replace="~{fragments/layout :: navbar('predictions')}"></nav>
+
+<main class="page">
+    <div class="page-header" style="display: flex; justify-content: space-between; align-items: flex-end; flex-wrap: wrap; gap: 16px;">
+        <div>
+            <h1>AQI Trend Prediction &amp; Forecasting</h1>
+            <p>Mathematical short-term trend extrapolation using Ordinary Least Squares (OLS) Linear Regression</p>
+        </div>
+
+        <!-- Station Selector Form -->
+        <form th:action="@{/predictions}" method="get" style="display: flex; gap: 10px; align-items: center;">
+            <select name="stationId" class="form-control" style="width: 240px;" onchange="this.form.submit()">
+                <option th:each="st : ${stations}"
+                        th:value="${st.stationId}"
+                        th:text="${st.stationName + ' (' + st.cityName + ')'}"
+                        th:selected="${selectedStationId != null and selectedStationId == st.stationId}">
+                    Station
+                </option>
+            </select>
+            <select name="days" class="form-control" style="width: 140px;" onchange="this.form.submit()">
+                <option value="1" th:selected="${param.days != null and param.days[0] == '1'}">1-Day Forecast</option>
+                <option value="2" th:selected="${param.days != null and param.days[0] == '2'}">2-Day Forecast</option>
+                <option value="3" th:selected="${param.days == null or param.days[0] == '3'}">3-Day Forecast</option>
+            </select>
+        </form>
+    </div>
+
+    <!-- Sufficient Data View -->
+    <div th:if="${result.sufficientData}">
+        <!-- Summary Cards -->
+        <div class="grid-4" style="margin-bottom: 28px;">
+            <div class="glass-card stat-card">
+                <div class="stat-value" style="color: var(--accent);" th:text="${result.historicalDataPoints}">10</div>
+                <div class="stat-label">Historical Data Points</div>
+            </div>
+            <div class="glass-card stat-card">
+                <div class="stat-value" style="color: #38BDF8;" th:text="${result.slope}">+4.2</div>
+                <div class="stat-label">Regression Slope (m)</div>
+            </div>
+            <div class="glass-card stat-card" style="grid-column: span 2;">
+                <div class="stat-value" style="font-size: 1.45rem; line-height: 1.4;"
+                     th:styleappend="'color: ' + (${result.trendDirection.contains('Increasing')} ? 'var(--aqi-very-poor)' :
+                                                 (${result.trendDirection.contains('Decreasing')} ? 'var(--aqi-good)' : 'var(--aqi-moderate)'))"
+                     th:text="${result.trendDirection}">
+                    Increasing Trend
+                </div>
+                <div class="stat-label">Identified Trend Trajectory</div>
+            </div>
+        </div>
+
+        <!-- Projected Days Cards -->
+        <div class="section-title">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="12" cy="12" r="10"></circle>
+                <polyline points="12 6 12 12 14 14"></polyline>
+            </svg>
+            <span>Projected Daily Forecasts (Next 1–3 Days)</span>
+        </div>
+
+        <div class="grid-3" style="margin-bottom: 32px;">
+            <div th:each="pred, iter : ${result.predictions}" class="glass-card aqi-card">
+                <div class="aqi-card-header">
+                    <div>
+                        <div class="aqi-card-title" th:text="${'Forecast Day +' + iter.count}">Day +1</div>
+                        <div class="aqi-card-subtitle" th:text="${#temporals.format(pred.date, 'EEEE, dd MMM yyyy')}">Date</div>
+                    </div>
+                    <span class="badge"
+                          th:classappend="${pred.predictedCategory == 'Good' ? 'badge-good' :
+                                           (pred.predictedCategory == 'Satisfactory' ? 'badge-satisfactory' :
+                                           (pred.predictedCategory == 'Moderately Polluted' ? 'badge-moderate' :
+                                           (pred.predictedCategory == 'Poor' ? 'badge-poor' :
+                                           (pred.predictedCategory == 'Very Poor' ? 'badge-very-poor' : 'badge-severe'))))}"
+                          th:text="${pred.predictedCategory}">Category</span>
+                </div>
+
+                <div class="aqi-card-value"
+                     th:style="'color: ' + (${pred.predictedCategory == 'Good'} ? 'var(--aqi-good)' :
+                                            (${pred.predictedCategory == 'Satisfactory'} ? 'var(--aqi-satisfactory)' :
+                                            (${pred.predictedCategory == 'Moderately Polluted'} ? 'var(--aqi-moderate)' :
+                                            (${pred.predictedCategory == 'Poor'} ? 'var(--aqi-poor)' :
+                                            (${pred.predictedCategory == 'Very Poor'} ? 'var(--aqi-very-poor)' : 'var(--aqi-severe)')))))"
+                     th:text="${pred.predictedAqi}">
+                    245.0
+                </div>
+
+                <div class="aqi-card-footer">
+                    <span>Model: <strong>Linear OLS</strong></span>
+                    <span style="color: #818CF8;">Statistical Estimate</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Prediction Chart -->
+        <div class="glass-card" style="margin-bottom: 32px;">
+            <div class="section-title">Historical Baseline vs. Projected Trajectory</div>
+            <div style="height: 320px; position: relative;">
+                <canvas id="predictionChart"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <!-- Insufficient Data View -->
+    <div th:if="${!result.sufficientData}" class="glass-card" style="padding: 48px; text-align: center; margin-bottom: 32px;">
+        <div style="width: 56px; height: 56px; border-radius: 50%; background: rgba(234, 179, 8, 0.15); display: flex; align-items: center; justify-content: center; margin: 0 auto 16px auto;">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#FACC15" stroke-width="2">
+                <circle cx="12" cy="12" r="10"></circle>
+                <line x1="12" y1="8" x2="12" y2="12"></line>
+                <line x1="12" y1="16" x2="12.01" y2="16"></line>
+            </svg>
+        </div>
+        <h2 style="font-size: 1.3rem; margin-bottom: 8px;">Insufficient Historical Data</h2>
+        <p style="color: var(--text-secondary); max-width: 540px; margin: 0 auto 16px auto; font-size: 0.9rem; line-height: 1.6;">
+            The prediction engine requires at least <strong>7 valid historical daily records</strong> to formulate an explainable linear regression.
+            This station currently has <strong th:text="${result.historicalDataPoints}">0</strong> daily historical records.
+        </p>
+        <p style="color: var(--text-muted); font-size: 0.8rem;">
+            Tip: Switch to <em>ITO Delhi</em>, <em>Anand Vihar</em>, or <em>Bandra-Worli Mumbai</em> in the dropdown above to view an active demonstration.
+        </p>
+    </div>
+
+    <!-- Methodology & Academic Disclaimer -->
+    <div class="glass-card">
+        <div class="section-title">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="12" cy="12" r="10"></circle>
+                <line x1="12" y1="16" x2="12" y2="12"></line>
+                <line x1="12" y1="8" x2="12.01" y2="8"></line>
+            </svg>
+            <span>Prediction Methodology &amp; Academic Scope</span>
+        </div>
+        <div style="font-size: 0.88rem; color: var(--text-secondary); line-height: 1.7;">
+            <p style="margin-bottom: 10px;">
+                <strong>Mathematical Foundation:</strong> Fits a linear function <code style="color: #818CF8;">y = mx + c</code>
+                over historical sequential daily observations using Ordinary Least Squares (OLS) closed-form minimization.
+            </p>
+            <p style="margin-bottom: 10px;">
+                <strong>Academic Disclaimer:</strong> <span th:text="${result.disclaimer}">Disclaimer</span>
+            </p>
+            <p style="color: var(--text-muted); font-style: italic;">
+                Demonstration project built by Big Coders (Group 3Q15): Aryan Sharma, Aniket Raj, Chirag Lamba.
+            </p>
+        </div>
+    </div>
+</main>
+
+<footer th:replace="~{fragments/layout :: footer}"></footer>
+
+<script th:inline="javascript">
+/*<![CDATA[*/
+    document.addEventListener('DOMContentLoaded', () => {
+        const historical = /*[[${result.historicalPoints}]]*/ [];
+        const predictions = /*[[${result.predictions}]]*/ [];
+
+        if (historical && historical.length > 0) {
+            const labels = [];
+            const historyValues = [];
+            const predValues = [];
+
+            historical.forEach(h => {
+                labels.push(h.date);
+                historyValues.push(Number(h.aqiValue));
+                predValues.push(null);
+            });
+
+            // Connect prediction line smoothly
+            if (predictions && predictions.length > 0) {
+                predValues[predValues.length - 1] = historyValues[historyValues.length - 1];
+                predictions.forEach(p => {
+                    labels.push(p.date + ' (Pred)');
+                    historyValues.push(null);
+                    predValues.push(Number(p.predictedAqi));
+                });
+            }
+
+            const ctx = document.getElementById('predictionChart');
+            if (ctx) {
+                new Chart(ctx, {
+                    type: 'line',
+                    data: {
+                        labels: labels,
+                        datasets: [
+                            {
+                                label: 'Historical Measured AQI',
+                                data: historyValues,
+                                borderColor: '#818CF8',
+                                backgroundColor: 'rgba(99, 102, 241, 0.1)',
+                                borderWidth: 2.5,
+                                tension: 0.2,
+                                pointRadius: 4
+                            },
+                            {
+                                label: 'Predicted Trend (OLS)',
+                                data: predValues,
+                                borderColor: '#F59E0B',
+                                borderDash: [6, 6],
+                                borderWidth: 2.5,
+                                tension: 0,
+                                pointBackgroundColor: '#F59E0B',
+                                pointRadius: 5
+                            }
+                        ]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: { labels: { color: '#94A3B8', font: { family: 'Inter' } } }
+                        },
+                        scales: {
+                            x: { grid: { color: 'rgba(255,255,255,0.04)' }, ticks: { color: '#64748B' } },
+                            y: { beginAtZero: true, max: 500, grid: { color: 'rgba(255,255,255,0.04)' }, ticks: { color: '#64748B' } }
+                        }
+                    }
+                });
+            }
+        }
+    });
+/*]]>*/
+</script>
+
+</body>
+</html>
+

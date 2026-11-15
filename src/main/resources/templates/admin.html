@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Admin Control Panel')}"></head>
+<body>
+
+<nav th:replace="~{fragments/layout :: navbar('admin')}"></nav>
+
+<main class="page">
+    <div class="page-header">
+        <h1>Administrative Management Console</h1>
+        <p>Master data maintenance: Cities, Monitoring Stations, CPCB Pollutant Parameters, and User Roles</p>
+    </div>
+
+    <!-- Notification Banners -->
+    <div th:if="${successMessage}" class="alert-banner alert-success" th:text="${successMessage}"></div>
+    <div th:if="${errorMessage}" class="alert-banner alert-error" th:text="${errorMessage}"></div>
+
+    <!-- Tabs -->
+    <div class="tabs">
+        <a th:href="@{/admin(tab='cities')}" class="tab-btn" th:classappend="${activeTab == 'cities' ? 'active' : ''}">Cities</a>
+        <a th:href="@{/admin(tab='stations')}" class="tab-btn" th:classappend="${activeTab == 'stations' ? 'active' : ''}">Stations</a>
+        <a th:href="@{/admin(tab='pollutants')}" class="tab-btn" th:classappend="${activeTab == 'pollutants' ? 'active' : ''}">Pollutants</a>
+        <a th:href="@{/admin(tab='users')}" class="tab-btn" th:classappend="${activeTab == 'users' ? 'active' : ''}">User Roles</a>
+    </div>
+
+    <!-- TAB 1: CITIES -->
+    <div th:if="${activeTab == 'cities'}">
+        <div class="grid-2" style="margin-bottom: 24px;">
+            <!-- Add City Form -->
+            <div class="glass-card">
+                <div class="section-title">Add New City</div>
+                <form th:action="@{/admin/cities/add}" method="post">
+                    <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+
+                    <div class="form-group">
+                        <label>City Name *</label>
+                        <input type="text" name="cityName" class="form-control" placeholder="e.g. Chandigarh" required />
+                    </div>
+                    <div class="form-group">
+                        <label>State *</label>
+                        <input type="text" name="state" class="form-control" placeholder="e.g. Punjab" required />
+                    </div>
+                    <div class="form-group">
+                        <label>Country *</label>
+                        <input type="text" name="country" value="India" class="form-control" required />
+                    </div>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+                        <div class="form-group">
+                            <label>Latitude *</label>
+                            <input type="number" step="0.0000001" name="latitude" class="form-control" placeholder="30.7333" required />
+                        </div>
+                        <div class="form-group">
+                            <label>Longitude *</label>
+                            <input type="number" step="0.0000001" name="longitude" class="form-control" placeholder="76.7794" required />
+                        </div>
+                    </div>
+                    <button type="submit" class="btn btn-primary" style="width: 100%;">Save City</button>
+                </form>
+            </div>
+
+            <!-- Existing Cities Table -->
+            <div class="glass-card">
+                <div class="section-title">Registered Cities (<span th:text="${#lists.size(cities)}">0</span>)</div>
+                <div style="max-height: 400px; overflow-y: auto;">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>City</th>
+                                <th>State</th>
+                                <th>Coordinates</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:each="c : ${cities}">
+                                <td style="font-weight: 600; color: var(--text-primary);" th:text="${c.cityName}">City</td>
+                                <td th:text="${c.state}">State</td>
+                                <td style="font-size: 0.8rem; color: var(--text-muted);" th:text="${c.latitude + ', ' + c.longitude}">Lat, Lng</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- TAB 2: STATIONS -->
+    <div th:if="${activeTab == 'stations'}">
+        <div class="grid-2" style="margin-bottom: 24px;">
+            <!-- Add Station Form -->
+            <div class="glass-card">
+                <div class="section-title">Add Monitoring Station</div>
+                <form th:action="@{/admin/stations/add}" method="post">
+                    <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+
+                    <div class="form-group">
+                        <label>City *</label>
+                        <select name="cityId" class="form-control" required>
+                            <option value="">Select city...</option>
+                            <option th:each="c : ${cities}" th:value="${c.cityId}" th:text="${c.cityName}"></option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Station Name *</label>
+                        <input type="text" name="stationName" class="form-control" placeholder="e.g. Sector 17 Plaza" required />
+                    </div>
+                    <div class="form-group">
+                        <label>Location Description</label>
+                        <input type="text" name="locationDesc" class="form-control" placeholder="Commercial center" />
+                    </div>
+                    <div class="form-group">
+                        <label>Station Type</label>
+                        <select name="stationType" class="form-control">
+                            <option value="Continuous">Continuous</option>
+                            <option value="Automatic">Automatic</option>
+                            <option value="Manual">Manual</option>
+                        </select>
+                    </div>
+                    <button type="submit" class="btn btn-primary" style="width: 100%;">Create Station</button>
+                </form>
+            </div>
+
+            <!-- Existing Stations Table -->
+            <div class="glass-card">
+                <div class="section-title">All Stations (<span th:text="${#lists.size(stations)}">0</span>)</div>
+                <div style="max-height: 440px; overflow-y: auto;">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Station</th>
+                                <th>City</th>
+                                <th>Type</th>
+                                <th>Status</th>
+                                <th>Toggle</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:each="st : ${stations}">
+                                <td style="font-weight: 600; color: var(--text-primary);" th:text="${st.stationName}">Name</td>
+                                <td th:text="${st.cityName}">City</td>
+                                <td style="font-size: 0.8rem;" th:text="${st.stationType}">Continuous</td>
+                                <td>
+                                    <span class="badge"
+                                          th:classappend="${st.active ? 'badge-good' : 'badge-poor'}"
+                                          th:text="${st.active ? 'Active' : 'Inactive'}">Active</span>
+                                </td>
+                                <td>
+                                    <form th:action="@{'/admin/stations/' + ${st.stationId} + '/toggle'}" method="post">
+                                        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+                                        <input type="hidden" name="active" th:value="${!st.active}" />
+                                        <button type="submit" class="btn btn-outline" style="padding: 3px 8px; font-size: 0.75rem;"
+                                                onclick="return confirm('Toggle status for this station?')">
+                                            <span th:text="${st.active ? 'Deactivate' : 'Activate'}">Toggle</span>
+                                        </button>
+                                    </form>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- TAB 3: POLLUTANTS -->
+    <div th:if="${activeTab == 'pollutants'}">
+        <div class="glass-card">
+            <div class="section-title">CPCB 8 Official Pollutants &amp; Standards</div>
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Chemical Formula</th>
+                        <th>Name</th>
+                        <th>Measurement Unit</th>
+                        <th>CPCB Safe Limit</th>
+                        <th>Averaging Standard</th>
+                        <th>Description</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="p : ${pollutants}">
+                        <td th:text="${p.pollutantId}">1</td>
+                        <td style="font-weight: 700; color: #818CF8;" th:text="${p.chemicalFormula}">PM2.5</td>
+                        <td style="font-weight: 600; color: var(--text-primary);" th:text="${p.pollutantName}">Particulate Matter</td>
+                        <td th:text="${p.unit}">µg/m³</td>
+                        <td style="color: #4ADE80; font-weight: 600;" th:text="${p.safeLimit}">60.00</td>
+                        <td th:text="${p.averagingPeriod}">24-hour</td>
+                        <td style="font-size: 0.82rem; color: var(--text-muted);" th:text="${p.description}">Description</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- TAB 4: USERS -->
+    <div th:if="${activeTab == 'users'}">
+        <div class="glass-card">
+            <div class="section-title">System User Accounts &amp; Role Management</div>
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>User ID</th>
+                        <th>Username</th>
+                        <th>Email</th>
+                        <th>Current Role</th>
+                        <th>Created At</th>
+                        <th>Change Role</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="u : ${users}">
+                        <td th:text="${'#' + u.userId}">#1</td>
+                        <td style="font-weight: 600; color: var(--text-primary);" th:text="${u.username}">admin</td>
+                        <td th:text="${u.email}">admin@aqisystem.in</td>
+                        <td>
+                            <span class="user-badge" th:text="${u.role}">Admin</span>
+                        </td>
+                        <td style="font-size: 0.8rem; color: var(--text-muted);" th:text="${#temporals.format(u.createdAt, 'dd MMM yyyy HH:mm')}">Date</td>
+                        <td>
+                            <form th:action="@{'/admin/users/' + ${u.userId} + '/role'}" method="post" style="display: flex; gap: 8px;">
+                                <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+                                <select name="role" class="form-control" style="width: 130px; padding: 4px 8px; font-size: 0.8rem;">
+                                    <option value="Admin" th:selected="${u.role == 'Admin'}">Admin</option>
+                                    <option value="Analyst" th:selected="${u.role == 'Analyst'}">Analyst</option>
+                                    <option value="Operator" th:selected="${u.role == 'Operator'}">Operator</option>
+                                    <option value="Viewer" th:selected="${u.role == 'Viewer'}">Viewer</option>
+                                </select>
+                                <button type="submit" class="btn btn-outline" style="padding: 4px 10px; font-size: 0.75rem;">
+                                    Update
+                                </button>
+                            </form>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</main>
+
+<footer th:replace="~{fragments/layout :: footer}"></footer>
+
+</body>
+</html>
+
