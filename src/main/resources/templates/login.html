@@ -3,7 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sign In — AQI Monitoring &amp; Prediction System</title>
+    <title>Sign In — AQI Sentinel Console</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" th:href="@{/css/style.css}">
     <style>
         .login-wrapper {
@@ -12,48 +15,88 @@
             align-items: center;
             justify-content: center;
             padding: 24px;
-            background: radial-gradient(circle at 50% 20%, rgba(99, 102, 241, 0.12), transparent 50%), var(--bg-primary);
+            background: #0B0F19;
+            position: relative;
+        }
+        .login-wrapper::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, #10B981, #84CC16, #F59E0B, #F97316, #EF4444, #991B1B);
         }
         .login-card {
             width: 100%;
             max-width: 440px;
+            background: #111827;
+            border: 1px solid #1F2937;
+            border-radius: 12px;
+            padding: 32px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
         }
         .login-header {
             text-align: center;
-            margin-bottom: 28px;
+            margin-bottom: 24px;
         }
         .demo-accounts {
             margin-top: 24px;
             padding-top: 20px;
-            border-top: 1px solid var(--border-color);
-            font-size: 0.8rem;
-            color: var(--text-muted);
+            border-top: 1px solid #1F2937;
+            font-size: 0.78rem;
+            color: #94A3B8;
         }
-        .demo-pill {
-            display: inline-block;
-            padding: 3px 8px;
+        .demo-card {
+            background: #0B0F19;
+            border: 1px solid #1F2937;
             border-radius: 6px;
-            background: rgba(255, 255, 255, 0.05);
-            margin: 2px;
-            font-family: monospace;
-            color: var(--text-secondary);
+            padding: 8px 10px;
+            cursor: pointer;
+            transition: all 0.15s ease;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .demo-card:hover {
+            border-color: #4F46E5;
+            background: #131C2E;
+        }
+        .demo-user {
+            font-family: 'JetBrains Mono', monospace;
+            font-weight: 600;
+            color: #F8FAFC;
+        }
+        .demo-role {
+            font-size: 0.7rem;
+            padding: 2px 6px;
+            border-radius: 4px;
+            background: rgba(99, 102, 241, 0.15);
+            color: #A5B4FC;
+            font-weight: 600;
         }
     </style>
 </head>
 <body>
 
 <div class="login-wrapper">
-    <div class="glass-card login-card">
+    <div class="login-card">
         <div class="login-header">
-            <div class="brand-icon" style="margin: 0 auto 16px auto; width: 44px; height: 44px;">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="2.2">
-                    <circle cx="12" cy="12" r="10"></circle>
-                    <line x1="2" y1="12" x2="22" y2="12"></line>
-                    <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path>
-                </svg>
+            <div style="display: inline-flex; align-items: center; gap: 8px; margin-bottom: 12px;">
+                <div class="brand-icon" style="width: 36px; height: 36px;">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="2.2">
+                        <circle cx="12" cy="12" r="10"></circle>
+                        <line x1="2" y1="12" x2="22" y2="12"></line>
+                        <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path>
+                    </svg>
+                </div>
+                <div style="text-align: left;">
+                    <div style="font-size: 1.15rem; font-weight: 800; letter-spacing: -0.02em; color: #F8FAFC;">
+                        AQI SENTINEL <span class="brand-badge">CPCB v2.4</span>
+                    </div>
+                </div>
             </div>
-            <h1 style="font-size: 1.5rem; font-weight: 800; color: var(--text-primary);">Sign In</h1>
-            <p style="color: var(--text-secondary); font-size: 0.88rem; margin-top: 4px;">AQI Monitoring &amp; Prediction System</p>
+            <p style="color: #94A3B8; font-size: 0.82rem; margin: 0;">National Air Quality Surveillance &amp; Prediction Console</p>
         </div>
 
         <div th:if="${errorMessage}" class="alert-banner alert-error" th:text="${errorMessage}"></div>
@@ -63,33 +106,56 @@
             <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
 
             <div class="form-group">
-                <label for="username">Username</label>
-                <input type="text" id="username" name="username" class="form-control" placeholder="Enter username" required autofocus />
+                <label for="username">Operator / Analyst Username</label>
+                <input type="text" id="username" name="username" class="form-control" placeholder="e.g. admin" required autofocus />
             </div>
 
             <div class="form-group">
-                <label for="password">Password</label>
-                <input type="password" id="password" name="password" class="form-control" placeholder="Enter password" required />
+                <label for="password">Security Password</label>
+                <input type="password" id="password" name="password" class="form-control" placeholder="••••••••" required />
             </div>
 
-            <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 8px;">
-                Sign In to Platform
+            <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 8px; padding: 10px 16px;">
+                Authenticate &amp; Launch Console
             </button>
         </form>
 
         <div class="demo-accounts">
-            <p style="font-weight: 600; margin-bottom: 8px; color: var(--text-secondary);">Demo Testing Credentials:</p>
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 6px;">
-                <div><span class="demo-pill">admin</span> / <span class="demo-pill">admin123</span> (Admin)</div>
-                <div><span class="demo-pill">analyst</span> / <span class="demo-pill">analyst123</span> (Analyst)</div>
-                <div><span class="demo-pill">operator</span> / <span class="demo-pill">operator123</span> (Operator)</div>
-                <div><span class="demo-pill">viewer</span> / <span class="demo-pill">viewer123</span> (Viewer)</div>
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                <span style="font-weight: 600; color: #CBD5E1;">Quick Credentials (Click to Fill):</span>
+                <span class="status-indicator" style="font-size: 0.7rem; padding: 1px 6px;"><span class="pulse-dot"></span> Live</span>
             </div>
-            <p style="margin-top: 10px; font-style: italic; font-size: 0.75rem;">Big Coders &bull; Group 3Q15 (Aryan Sharma, Aniket Raj, Chirag Lamba)</p>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 6px;">
+                <div class="demo-card" onclick="fillCreds('admin', 'admin123')">
+                    <span class="demo-user">admin</span>
+                    <span class="demo-role">Admin</span>
+                </div>
+                <div class="demo-card" onclick="fillCreds('analyst', 'analyst123')">
+                    <span class="demo-user">analyst</span>
+                    <span class="demo-role">Analyst</span>
+                </div>
+                <div class="demo-card" onclick="fillCreds('operator', 'operator123')">
+                    <span class="demo-user">operator</span>
+                    <span class="demo-role">Operator</span>
+                </div>
+                <div class="demo-card" onclick="fillCreds('viewer', 'viewer123')">
+                    <span class="demo-user">viewer</span>
+                    <span class="demo-role">Viewer</span>
+                </div>
+            </div>
+            <div style="margin-top: 14px; text-align: center; color: #64748B; font-size: 0.73rem;">
+                Built by <strong>Big Coders</strong> &bull; Group 3Q15 (Aryan Sharma, Aniket Raj, Chirag Lamba)
+            </div>
         </div>
     </div>
 </div>
 
+<script>
+    function fillCreds(u, p) {
+        document.getElementById('username').value = u;
+        document.getElementById('password').value = p;
+    }
+</script>
+
 </body>
 </html>
-
