@@ -56,6 +56,67 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 /**
+ * Chart.js Helper: Renders Station AQI Bar Chart with CPCB Color-Coded Bars
+ */
+function renderStationBarChart(canvasId, labels, aqiValues) {
+    const ctx = document.getElementById(canvasId);
+    if (!ctx) return;
+
+    const colors = aqiValues.map(v => {
+        if (v <= 50) return '#10B981'; // Good (Green)
+        if (v <= 100) return '#84CC16'; // Satisfactory (Lime)
+        if (v <= 200) return '#EAB308'; // Moderate (Yellow)
+        if (v <= 300) return '#F97316'; // Poor (Orange)
+        if (v <= 400) return '#EF4444'; // Very Poor (Red)
+        return '#991B1B'; // Severe (Dark Red)
+    });
+
+    new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: labels,
+            datasets: [{
+                label: 'Air Quality Index',
+                data: aqiValues,
+                backgroundColor: colors,
+                borderRadius: 6,
+                borderWidth: 0,
+                maxBarThickness: 45
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: { display: false },
+                tooltip: {
+                    backgroundColor: '#111827',
+                    titleColor: '#F1F5F9',
+                    bodyColor: '#94A3B8',
+                    borderColor: 'rgba(255,255,255,0.1)',
+                    borderWidth: 1,
+                    callbacks: {
+                        label: (c) => `AQI: ${c.parsed.y}`
+                    }
+                }
+            },
+            scales: {
+                x: {
+                    grid: { display: false },
+                    ticks: { color: '#94A3B8', font: { family: 'Inter', size: 12 } }
+                },
+                y: {
+                    beginAtZero: true,
+                    max: 500,
+                    grid: { color: 'rgba(255,255,255,0.04)' },
+                    ticks: { color: '#64748B', font: { family: 'Inter' } }
+                }
+            }
+        }
+    });
+}
+
+/**
  * Chart.js Helper: Renders AQI Trend Chart
  */
 function renderAqiTrendChart(canvasId, labels, dataPoints, labelName = 'AQI Value') {

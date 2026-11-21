@@ -32,19 +32,19 @@
     <div class="grid-4" style="margin-bottom: 32px;">
         <div class="glass-card stat-card">
             <div class="stat-value" style="color: var(--accent);" th:text="${data.cityCount}">11</div>
-            <div class="stat-label">Cities Monitored</div>
+            <div class="stat-label" th:text="${selectedCityId != null ? 'Selected City' : 'Cities Monitored'}">Cities Monitored</div>
         </div>
         <div class="glass-card stat-card">
             <div class="stat-value" style="color: var(--aqi-satisfactory);" th:text="${data.stationCount}">21</div>
-            <div class="stat-label">Active Monitoring Stations</div>
+            <div class="stat-label" th:text="${selectedCityId != null ? 'City Stations' : 'Active Monitoring Stations'}">Active Monitoring Stations</div>
         </div>
         <div class="glass-card stat-card">
             <div class="stat-value" style="color: var(--aqi-moderate);" th:text="${#numbers.formatDecimal(data.avgAqi, 1, 1)}">145.2</div>
-            <div class="stat-label">Average National AQI</div>
+            <div class="stat-label" th:text="${selectedCityId != null ? 'City Average AQI' : 'Average National AQI'}">Average National AQI</div>
         </div>
         <div class="glass-card stat-card">
             <div class="stat-value" style="color: var(--aqi-very-poor);" th:text="${data.activeAlerts}">4</div>
-            <div class="stat-label">Active Threshold Alerts</div>
+            <div class="stat-label" th:text="${selectedCityId != null ? 'Active City Alerts' : 'Active Threshold Alerts'}">Active Threshold Alerts</div>
         </div>
     </div>
 
@@ -57,8 +57,11 @@
     </div>
 
     <div class="grid-3" style="margin-bottom: 36px;">
+        <div th:if="${#lists.isEmpty(data.stationAqiList)}" class="glass-card" style="grid-column: 1 / -1; text-align: center; padding: 32px; color: var(--text-muted);">
+            No monitoring stations registered for this city yet.
+        </div>
         <div th:each="st : ${data.stationAqiList}"
-             th:if="${selectedCityId == null or selectedCityId == st.stationId}"
+             th:if="${selectedCityId == null or selectedCityId == st.cityId}"
              class="glass-card aqi-card">
 
             <!-- Category Glow Indicator -->
@@ -95,7 +98,7 @@
 
             <div class="aqi-card-footer">
                 <span>Dominant: <strong style="color: var(--text-primary);" th:text="${st.dominantPollutant ?: 'N/A'}">PM2.5</strong></span>
-                <span th:text="${st.recordDate != null ? #temporals.format(st.recordDate, 'dd MMM yyyy') : 'No Record'}">01 May 2026</span>
+                <span th:text="${st.recordDate != null ? #temporals.format(st.recordDate, 'dd MMM yyyy') : 'Recent'}">Recent</span>
             </div>
         </div>
     </div>
@@ -231,7 +234,7 @@
         if (stationList && stationList.length > 0) {
             const labels = stationList.map(s => s.stationName);
             const aqiValues = stationList.map(s => s.aqiValue ? Number(s.aqiValue) : 0);
-            renderAqiTrendChart('dashboardAqiChart', labels, aqiValues, 'Latest Station AQI');
+            renderStationBarChart('dashboardAqiChart', labels, aqiValues);
         }
     });
 /*]]>*/

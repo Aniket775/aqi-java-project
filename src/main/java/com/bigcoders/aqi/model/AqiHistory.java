@@ -6,6 +6,7 @@ import java.time.LocalDate;
 public class AqiHistory {
     private Integer aqiId;
     private Integer stationId;
+    private Integer cityId;
     private BigDecimal aqiValue;
     private String aqiCategory;
     private LocalDate recordDate;
@@ -36,6 +37,9 @@ public class AqiHistory {
 
     public Integer getStationId() { return stationId; }
     public void setStationId(Integer stationId) { this.stationId = stationId; }
+
+    public Integer getCityId() { return cityId; }
+    public void setCityId(Integer cityId) { this.cityId = cityId; }
 
     public BigDecimal getAqiValue() { return aqiValue; }
     public void setAqiValue(BigDecimal aqiValue) { this.aqiValue = aqiValue; }

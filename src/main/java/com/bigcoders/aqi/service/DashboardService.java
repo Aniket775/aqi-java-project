@@ -58,17 +58,55 @@ public class DashboardService {
      * recent alerts, city rankings, and weather conditions.
      */
     public DashboardData getDashboardData() {
+        return getDashboardData(null);
+    }
+
+    public DashboardData getDashboardData(Integer cityId) {
         DashboardData data = new DashboardData();
 
-        data.setCityCount(cityRepository.count());
-        data.setStationCount(stationRepository.countActive());
-        data.setAvgAqi(aqiHistoryRepository.getOverallNationalAverage());
-        data.setActiveAlerts(alertLogRepository.countUnresolved());
+        if (cityId == null) {
+            data.setCityCount(cityRepository.count());
+            data.setStationCount(stationRepository.countActive());
+            data.setAvgAqi(aqiHistoryRepository.getOverallNationalAverage());
+            data.setActiveAlerts(alertLogRepository.countUnresolved());
 
-        data.setStationAqiList(aqiHistoryRepository.findLatestPerStation());
-        data.setRecentAlerts(alertLogRepository.findRecent(15));
-        data.setCityAvgAqi(aqiHistoryRepository.getCityAverages());
-        data.setWeatherList(weatherDataRepository.findLatestPerCity());
+            data.setStationAqiList(aqiHistoryRepository.findLatestPerStation());
+            data.setRecentAlerts(alertLogRepository.findRecent(15));
+            data.setCityAvgAqi(aqiHistoryRepository.getCityAverages());
+            data.setWeatherList(weatherDataRepository.findLatestPerCity());
+        } else {
+            var stationsInCity = aqiHistoryRepository.findLatestPerStation(cityId);
+            data.setStationAqiList(stationsInCity);
+            data.setCityCount(1L);
+            data.setStationCount(stationsInCity.size());
+
+            double avg = stationsInCity.stream()
+                    .filter(s -> s.getAqiValue() != null)
+                    .mapToDouble(s -> s.getAqiValue().doubleValue())
+                    .average()
+                    .orElse(0.0);
+            data.setAvgAqi(Math.round(avg * 10.0) / 10.0);
+
+            var allAlerts = alertLogRepository.findRecent(50);
+            var cityAlerts = allAlerts.stream()
+                    .filter(a -> stationsInCity.stream().anyMatch(s -> s.getStationName().equalsIgnoreCase(a.getStationName())))
+                    .toList();
+            data.setActiveAlerts(cityAlerts.stream().filter(a -> !a.isResolved()).count());
+            data.setRecentAlerts(cityAlerts);
+
+            data.setCityAvgAqi(aqiHistoryRepository.getCityAverages());
+
+            var allWeather = weatherDataRepository.findLatestPerCity();
+            var city = cityRepository.findById(cityId);
+            if (city.isPresent()) {
+                var cityWeather = allWeather.stream()
+                        .filter(w -> w.getCityName().equalsIgnoreCase(city.get().getCityName()))
+                        .toList();
+                data.setWeatherList(cityWeather.isEmpty() ? allWeather : cityWeather);
+            } else {
+                data.setWeatherList(allWeather);
+            }
+        }
 
         return data;
     }

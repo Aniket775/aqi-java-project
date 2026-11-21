@@ -39,6 +39,10 @@ public class AqiHistoryRepository {
             h.setStationName(rs.getString("station_name"));
             h.setCityName(rs.getString("city_name"));
             h.setState(rs.getString("state"));
+            int cid = rs.getInt("city_id");
+            if (!rs.wasNull()) {
+                h.setCityId(cid);
+            }
         } catch (Exception ignored) {}
         return h;
     };
@@ -87,7 +91,7 @@ public class AqiHistoryRepository {
     }
 
     public Optional<AqiHistory> findByStationAndDate(int stationId, LocalDate date) {
-        String sql = "SELECT ah.*, s.station_name, c.city_name, c.state " +
+        String sql = "SELECT ah.*, s.station_name, s.city_id, c.city_name, c.state " +
                      "FROM aqi_history ah " +
                      "JOIN station s ON ah.station_id = s.station_id " +
                      "JOIN city c ON s.city_id = c.city_id " +
@@ -97,20 +101,32 @@ public class AqiHistoryRepository {
     }
 
     public List<AqiHistory> findLatestPerStation() {
-        String sql = "SELECT ah.*, s.station_name, c.city_name, c.state " +
-                     "FROM station s " +
-                     "JOIN city c ON s.city_id = c.city_id " +
-                     "LEFT JOIN aqi_history ah ON s.station_id = ah.station_id " +
-                     "    AND ah.record_date = ( " +
-                     "        SELECT MAX(record_date) FROM aqi_history WHERE station_id = s.station_id " +
-                     "    ) " +
-                     "WHERE s.is_active = TRUE " +
-                     "ORDER BY ah.aqi_value DESC, s.station_name ASC";
-        return jdbcTemplate.query(sql, rowMapper);
+        return findLatestPerStation(null);
+    }
+
+    public List<AqiHistory> findLatestPerStation(Integer cityId) {
+        StringBuilder sql = new StringBuilder(
+            "SELECT ah.*, s.station_name, s.city_id, c.city_name, c.state " +
+            "FROM station s " +
+            "JOIN city c ON s.city_id = c.city_id " +
+            "LEFT JOIN aqi_history ah ON s.station_id = ah.station_id " +
+            "    AND ah.record_date = ( " +
+            "        SELECT MAX(record_date) FROM aqi_history WHERE station_id = s.station_id " +
+            "    ) " +
+            "WHERE s.is_active = TRUE "
+        );
+        if (cityId != null) {
+            sql.append("AND s.city_id = ? ");
+            sql.append("ORDER BY ah.aqi_value DESC, s.station_name ASC");
+            return jdbcTemplate.query(sql.toString(), rowMapper, cityId);
+        } else {
+            sql.append("ORDER BY ah.aqi_value DESC, s.station_name ASC");
+            return jdbcTemplate.query(sql.toString(), rowMapper);
+        }
     }
 
     public List<AqiHistory> findAll(int limit) {
-        String sql = "SELECT ah.*, s.station_name, c.city_name, c.state " +
+        String sql = "SELECT ah.*, s.station_name, s.city_id, c.city_name, c.state " +
                      "FROM aqi_history ah " +
                      "JOIN station s ON ah.station_id = s.station_id " +
                      "JOIN city c ON s.city_id = c.city_id " +
@@ -120,7 +136,7 @@ public class AqiHistoryRepository {
     }
 
     public List<AqiHistory> findByStationId(int stationId, int limit) {
-        String sql = "SELECT ah.*, s.station_name, c.city_name, c.state " +
+        String sql = "SELECT ah.*, s.station_name, s.city_id, c.city_name, c.state " +
                      "FROM aqi_history ah " +
                      "JOIN station s ON ah.station_id = s.station_id " +
                      "JOIN city c ON s.city_id = c.city_id " +
@@ -131,7 +147,7 @@ public class AqiHistoryRepository {
     }
 
     public List<AqiHistory> findHistoricalPointsAsc(int stationId, int days) {
-        String sql = "SELECT ah.*, s.station_name, c.city_name, c.state " +
+        String sql = "SELECT ah.*, s.station_name, s.city_id, c.city_name, c.state " +
                      "FROM aqi_history ah " +
                      "JOIN station s ON ah.station_id = s.station_id " +
                      "JOIN city c ON s.city_id = c.city_id " +
@@ -143,7 +159,7 @@ public class AqiHistoryRepository {
 
     public List<AqiHistory> findByFilters(Integer cityId, Integer stationId, LocalDate fromDate, LocalDate toDate) {
         StringBuilder sql = new StringBuilder(
-                "SELECT ah.*, s.station_name, c.city_name, c.state " +
+                "SELECT ah.*, s.station_name, s.city_id, c.city_name, c.state " +
                 "FROM aqi_history ah " +
                 "JOIN station s ON ah.station_id = s.station_id " +
                 "JOIN city c ON s.city_id = c.city_id WHERE 1=1 "

@@ -27,7 +27,7 @@ public class DashboardController {
     public String dashboard(@RequestParam(value = "cityId", required = false) Integer cityId,
                             Model model,
                             Authentication authentication) {
-        DashboardData data = dashboardService.getDashboardData();
+        DashboardData data = dashboardService.getDashboardData(cityId);
         List<City> cities = cityRepository.findAll();
 
         model.addAttribute("data", data);
