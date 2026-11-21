@@ -20,11 +20,9 @@ By reading this guide (takes ~10 minutes), you will understand:
 
 ## 1. Quick Start: How to Run It on Your Laptop (or Cloud)
 
-### Option A: Open the Live Cloud Link
-The app is currently deployed and running live over public HTTPS:
-👉 **[https://doqzk-117-203-246-44.run.pinggy-free.link](https://doqzk-117-203-246-44.run.pinggy-free.link)**
-
-You can also deploy a permanent free copy on Render by clicking the **"Deploy to Render"** button in [README.md](README.md).
+### Option A: Open the Permanent Live Cloud Link
+The app is permanently deployed and hosted 24/7 on Render:  
+👉 **[https://aqi-java-project.onrender.com](https://aqi-java-project.onrender.com)**
 
 ### Option B: Run Locally on Your Machine
 You do **not** need Node.js, React, or even a local MySQL server installed to test and demo this project. The system has an intelligent auto-fallback: if MySQL is not running on your laptop, it will automatically launch an embedded database loaded with sample data!

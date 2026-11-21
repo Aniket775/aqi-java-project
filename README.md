@@ -12,6 +12,13 @@
 
 ---
 
+## 🌐 Live Production URL
+
+The application is deployed live 24/7 on Render:  
+👉 **[https://aqi-java-project.onrender.com](https://aqi-java-project.onrender.com)**
+
+---
+
 ## 📌 Executive Summary
 
 The **AQI Monitoring & Prediction System** is a complete Java-based academic web application built on **Java 21**, **Spring Boot 3.4**, **Spring Security**, **Spring JDBC (JdbcTemplate)**, **Thymeleaf**, and **MySQL 8.x**.
