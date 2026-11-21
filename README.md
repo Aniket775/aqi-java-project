@@ -20,6 +20,23 @@ The application manages ambient air quality monitoring across Indian cities and 
 
 ---
 
+## ☁️ 1-Click Cloud Deployment
+
+The repository includes production `Dockerfile`, `Procfile`, `system.properties`, and `render.yaml` for instant deployment:
+
+[![Deploy to Render](https://render.com/images/deploy-to-render-button.svg)](https://render.com/deploy?repo=https://github.com/Aniket775/aqi-java-project)
+&nbsp;&nbsp;
+[![Deploy on Railway](https://railway.com/button.svg)](https://railway.com/template/new?template=https://github.com/Aniket775/aqi-java-project)
+
+### How to Deploy to Render in 2 Minutes (Free):
+1. Go to [dashboard.render.com](https://dashboard.render.com) and log in with your GitHub account.
+2. Click **New +** &rarr; **Web Service**.
+3. Select your repository: `Aniket775/aqi-java-project`.
+4. Render automatically detects the `Dockerfile` or `pom.xml`.
+5. Click **Create Web Service**. Within 2 minutes, your live web app is online at `https://<your-service>.onrender.com`!
+
+---
+
 ## 🏗 System Architecture
 
 ```
