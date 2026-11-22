@@ -1,20 +1,20 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-<head th:replace="~{fragments/layout :: head('AQI Predictions')}"></head>
+<head th:replace="~{fragments/layout :: head('AQI Forecast & Trends')}"></head>
 <body>
 
 <nav th:replace="~{fragments/layout :: navbar('predictions')}"></nav>
 
 <main class="page">
-    <div class="page-header" style="display: flex; justify-content: space-between; align-items: flex-end; flex-wrap: wrap; gap: 16px;">
+    <div class="page-header" style="display: flex; justify-content: space-between; align-items: flex-end; flex-wrap: wrap; gap: 16px; margin-bottom: 28px;">
         <div>
-            <h1>AQI Trend Prediction &amp; Forecasting</h1>
-            <p>Mathematical short-term trend extrapolation using Ordinary Least Squares (OLS) Linear Regression</p>
+            <h1>Predictive Atmospheric Trajectory</h1>
+            <p>Mathematical short-term trend extrapolation using closed-form Ordinary Least Squares (OLS) regression</p>
         </div>
 
         <!-- Station Selector Form -->
         <form th:action="@{/predictions}" method="get" style="display: flex; gap: 10px; align-items: center;">
-            <select name="stationId" class="form-control" style="width: 240px;" onchange="this.form.submit()">
+            <select name="stationId" class="form-control" style="width: 260px;" onchange="this.form.submit()">
                 <option th:each="st : ${stations}"
                         th:value="${st.stationId}"
                         th:text="${st.stationName + ' (' + st.cityName + ')'}"
@@ -22,7 +22,7 @@
                     Station
                 </option>
             </select>
-            <select name="days" class="form-control" style="width: 140px;" onchange="this.form.submit()">
+            <select name="days" class="form-control" style="width: 150px;" onchange="this.form.submit()">
                 <option value="1" th:selected="${param.days != null and param.days[0] == '1'}">1-Day Forecast</option>
                 <option value="2" th:selected="${param.days != null and param.days[0] == '2'}">2-Day Forecast</option>
                 <option value="3" th:selected="${param.days == null or param.days[0] == '3'}">3-Day Forecast</option>
@@ -33,43 +33,61 @@
     <!-- Sufficient Data View -->
     <div th:if="${result.sufficientData}">
         <!-- Summary Cards -->
-        <div class="grid-4" style="margin-bottom: 28px;">
+        <div class="grid-4" style="margin-bottom: 32px;">
             <div class="glass-card stat-card">
-                <div class="stat-value" style="color: var(--accent);" th:text="${result.historicalDataPoints}">10</div>
-                <div class="stat-label">Historical Data Points</div>
+                <div class="stat-top">
+                    <span class="stat-label">Baseline Points</span>
+                    <div class="stat-icon">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 14 14"></polyline></svg>
+                    </div>
+                </div>
+                <div class="stat-value tabular-nums" style="color: var(--primary-forest);" th:text="${result.historicalDataPoints}">10</div>
+                <div class="stat-caption">Continuous daily sample observations</div>
             </div>
+
             <div class="glass-card stat-card">
-                <div class="stat-value" style="color: #38BDF8;" th:text="${result.slope}">+4.2</div>
-                <div class="stat-label">Regression Slope (m)</div>
+                <div class="stat-top">
+                    <span class="stat-label">Regression Slope</span>
+                    <div class="stat-icon">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"></polyline><polyline points="17 6 23 6 23 12"></polyline></svg>
+                    </div>
+                </div>
+                <div class="stat-value tabular-nums" style="color: var(--terracotta);" th:text="${result.slope}">+4.2</div>
+                <div class="stat-caption">Rate of delta AQI units per day (m)</div>
             </div>
+
             <div class="glass-card stat-card" style="grid-column: span 2;">
-                <div class="stat-value" style="font-size: 1.45rem; line-height: 1.4;"
-                     th:styleappend="'color: ' + (${result.trendDirection.contains('Increasing')} ? 'var(--aqi-very-poor)' :
-                                                 (${result.trendDirection.contains('Decreasing')} ? 'var(--aqi-good)' : 'var(--aqi-moderate)'))"
+                <div class="stat-top">
+                    <span class="stat-label">Identified Trend Trajectory</span>
+                    <span class="status-indicator" style="font-size: 0.72rem; padding: 2px 8px;">OLS Closed Form</span>
+                </div>
+                <div class="stat-value" style="font-size: 1.6rem; line-height: 1.3;"
+                     th:styleappend="'color: ' + (${result.trendDirection.contains('Increasing')} ? 'var(--aqi-vpoor)' :
+                                                 (${result.trendDirection.contains('Decreasing')} ? 'var(--aqi-good)' : 'var(--aqi-mod)'))"
                      th:text="${result.trendDirection}">
                     Increasing Trend
                 </div>
-                <div class="stat-label">Identified Trend Trajectory</div>
+                <div class="stat-caption">Extrapolated mathematical directionality over projection window</div>
             </div>
         </div>
 
         <!-- Projected Days Cards -->
         <div class="section-title">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
                 <circle cx="12" cy="12" r="10"></circle>
                 <polyline points="12 6 12 12 14 14"></polyline>
             </svg>
-            <span>Projected Daily Forecasts (Next 1–3 Days)</span>
+            <span>Projected Daily Atmospheric Forecasts (Next 1–3 Days)</span>
         </div>
 
-        <div class="grid-3" style="margin-bottom: 32px;">
-            <div th:each="pred, iter : ${result.predictions}" class="glass-card aqi-card">
-                <div class="aqi-card-header">
+        <div class="grid-3" style="margin-bottom: 36px;">
+            <div th:each="pred, iter : ${result.predictions}" class="glass-card">
+                <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 12px;">
                     <div>
-                        <div class="aqi-card-title" th:text="${'Forecast Day +' + iter.count}">Day +1</div>
-                        <div class="aqi-card-subtitle" th:text="${#temporals.format(pred.date, 'EEEE, dd MMM yyyy')}">Date</div>
+                        <div style="font-family: 'Fraunces', serif; font-size: 1.25rem; font-weight: 600; color: var(--text-ink);" th:text="${'Forecast Day +' + iter.count}">Day +1</div>
+                        <div style="font-size: 0.82rem; color: var(--text-muted);" th:text="${#temporals.format(pred.date, 'EEEE, dd MMM yyyy')}">Date</div>
                     </div>
-                    <span class="badge"
+                    <span class="station-category-badge"
                           th:classappend="${pred.predictedCategory == 'Good' ? 'badge-good' :
                                            (pred.predictedCategory == 'Satisfactory' ? 'badge-satisfactory' :
                                            (pred.predictedCategory == 'Moderately Polluted' ? 'badge-moderate' :
@@ -78,53 +96,61 @@
                           th:text="${pred.predictedCategory}">Category</span>
                 </div>
 
-                <div class="aqi-card-value"
-                     th:style="'color: ' + (${pred.predictedCategory == 'Good'} ? 'var(--aqi-good)' :
-                                            (${pred.predictedCategory == 'Satisfactory'} ? 'var(--aqi-satisfactory)' :
-                                            (${pred.predictedCategory == 'Moderately Polluted'} ? 'var(--aqi-moderate)' :
-                                            (${pred.predictedCategory == 'Poor'} ? 'var(--aqi-poor)' :
-                                            (${pred.predictedCategory == 'Very Poor'} ? 'var(--aqi-very-poor)' : 'var(--aqi-severe)')))))"
-                     th:text="${pred.predictedAqi}">
+                <div class="tabular-nums"
+                     style="font-family: 'Fraunces', serif; font-size: 3.2rem; font-weight: 700; line-height: 1; margin: 10px 0 16px 0;"
+                     th:styleappend="'color: ' + (${pred.predictedCategory == 'Good'} ? 'var(--aqi-good)' :
+                                                 (${pred.predictedCategory == 'Satisfactory'} ? 'var(--aqi-sat)' :
+                                                 (${pred.predictedCategory == 'Moderately Polluted'} ? 'var(--aqi-mod)' :
+                                                 (${pred.predictedCategory == 'Poor'} ? 'var(--aqi-poor)' :
+                                                 (${pred.predictedCategory == 'Very Poor'} ? 'var(--aqi-vpoor)' : 'var(--aqi-sev)')))))"
+                     th:text="${#numbers.formatDecimal(pred.predictedAqi, 1, 1)}">
                     245.0
                 </div>
 
-                <div class="aqi-card-footer">
+                <div style="padding-top: 10px; border-top: 1px solid var(--border-stone); display: flex; justify-content: space-between; align-items: center; font-size: 0.78rem; color: var(--text-muted);">
                     <span>Model: <strong>Linear OLS</strong></span>
-                    <span style="color: #818CF8;">Statistical Estimate</span>
+                    <span style="font-weight: 600; color: var(--primary-forest);">Extrapolated Sub-Index</span>
                 </div>
             </div>
         </div>
 
         <!-- Prediction Chart -->
-        <div class="glass-card" style="margin-bottom: 32px;">
-            <div class="section-title">Historical Baseline vs. Projected Trajectory</div>
-            <div style="height: 320px; position: relative;">
+        <div class="glass-card" style="margin-bottom: 36px;">
+            <div class="section-title">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <line x1="18" y1="20" x2="18" y2="10"></line>
+                    <line x1="12" y1="20" x2="12" y2="4"></line>
+                    <line x1="6" y1="20" x2="6" y2="14"></line>
+                </svg>
+                <span>Historical Measured Baseline vs. Projected Trajectory</span>
+            </div>
+            <div style="height: 340px; position: relative;">
                 <canvas id="predictionChart"></canvas>
             </div>
         </div>
     </div>
 
-    <!-- Insufficient Data View -->
-    <div th:if="${!result.sufficientData}" class="glass-card" style="padding: 48px; text-align: center; margin-bottom: 32px;">
-        <div style="width: 56px; height: 56px; border-radius: 50%; background: rgba(234, 179, 8, 0.15); display: flex; align-items: center; justify-content: center; margin: 0 auto 16px auto;">
-            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#FACC15" stroke-width="2">
-                <circle cx="12" cy="12" r="10"></circle>
-                <line x1="12" y1="8" x2="12" y2="12"></line>
-                <line x1="12" y1="16" x2="12.01" y2="16"></line>
+    <!-- Insufficient Data Friendly Empty State -->
+    <div th:if="${!result.sufficientData}" class="glass-card" style="padding: 56px 36px; text-align: center; margin-bottom: 36px;">
+        <!-- Friendly Illustrated Cloud with Question Mark SVG -->
+        <div style="width: 72px; height: 72px; border-radius: 50%; background: var(--sand-light); display: flex; align-items: center; justify-content: center; margin: 0 auto 18px auto; color: var(--terracotta);">
+            <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M17.5 19H9a7 7 0 1 1 6.71-9h1.79a4.5 4.5 0 1 1 0 9Z"></path>
+                <circle cx="12" cy="13" r="0.5" fill="currentColor"></circle>
             </svg>
         </div>
-        <h2 style="font-size: 1.3rem; margin-bottom: 8px;">Insufficient Historical Data</h2>
-        <p style="color: var(--text-secondary); max-width: 540px; margin: 0 auto 16px auto; font-size: 0.9rem; line-height: 1.6;">
-            The prediction engine requires at least <strong>7 valid historical daily records</strong> to formulate an explainable linear regression.
+        <h2 style="font-size: 1.5rem; margin-bottom: 10px;">Insufficient Historical Baseline</h2>
+        <p style="color: var(--text-earth); max-width: 560px; margin: 0 auto 16px auto; font-size: 0.95rem; line-height: 1.6;">
+            The prediction engine requires at least <strong>7 continuous daily records</strong> to formulate an explainable mathematical regression.
             This station currently has <strong th:text="${result.historicalDataPoints}">0</strong> daily historical records.
         </p>
-        <p style="color: var(--text-muted); font-size: 0.8rem;">
+        <p style="color: var(--text-muted); font-size: 0.85rem;">
             Tip: Switch to <em>ITO Delhi</em>, <em>Anand Vihar</em>, or <em>Bandra-Worli Mumbai</em> in the dropdown above to view an active demonstration.
         </p>
     </div>
 
-    <!-- Methodology & Academic Disclaimer -->
-    <div class="glass-card">
+    <!-- Methodology & Academic Note Box -->
+    <div class="glass-card" style="background: var(--bg-surface); border-left: 4px solid var(--primary-forest);">
         <div class="section-title">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                 <circle cx="12" cy="12" r="10"></circle>
@@ -133,15 +159,15 @@
             </svg>
             <span>Prediction Methodology &amp; Academic Scope</span>
         </div>
-        <div style="font-size: 0.88rem; color: var(--text-secondary); line-height: 1.7;">
-            <p style="margin-bottom: 10px;">
-                <strong>Mathematical Foundation:</strong> Fits a linear function <code style="color: #818CF8;">y = mx + c</code>
+        <div style="font-size: 0.9rem; color: var(--text-earth); line-height: 1.7;">
+            <p style="margin-bottom: 8px;">
+                <strong>Mathematical Foundation:</strong> Fits a closed-form linear function <code style="color: var(--primary-forest); background: var(--bg-muted); padding: 2px 6px; border-radius: 4px;">y = mx + c</code>
                 over historical sequential daily observations using Ordinary Least Squares (OLS) closed-form minimization.
             </p>
-            <p style="margin-bottom: 10px;">
-                <strong>Academic Disclaimer:</strong> <span th:text="${result.disclaimer}">Disclaimer</span>
+            <p style="margin-bottom: 8px;">
+                <strong>Academic Disclaimer:</strong> <span th:text="${result.disclaimer}">Disclaimer text</span>
             </p>
-            <p style="color: var(--text-muted); font-style: italic;">
+            <p style="color: var(--text-muted); font-style: italic; margin-top: 10px;">
                 Demonstration project built by Big Coders (Group 3Q15): Aryan Sharma, Aniket Raj, Chirag Lamba.
             </p>
         </div>
@@ -179,6 +205,10 @@
 
             const ctx = document.getElementById('predictionChart');
             if (ctx) {
+                const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+                const gridColor = isDark ? 'rgba(255, 255, 255, 0.08)' : 'rgba(47, 74, 58, 0.08)';
+                const textColor = isDark ? '#C5BFB5' : '#5C584E';
+
                 new Chart(ctx, {
                     type: 'line',
                     data: {
@@ -187,20 +217,24 @@
                             {
                                 label: 'Historical Measured AQI',
                                 data: historyValues,
-                                borderColor: '#818CF8',
-                                backgroundColor: 'rgba(99, 102, 241, 0.1)',
-                                borderWidth: 2.5,
-                                tension: 0.2,
+                                borderColor: '#2F4A3A',
+                                backgroundColor: 'rgba(47, 74, 58, 0.08)',
+                                borderWidth: 2.6,
+                                tension: 0.35,
+                                fill: true,
+                                pointBackgroundColor: '#2F4A3A',
                                 pointRadius: 4
                             },
                             {
-                                label: 'Predicted Trend (OLS)',
+                                label: 'Predicted Trajectory (OLS Forecast)',
                                 data: predValues,
-                                borderColor: '#F59E0B',
+                                borderColor: '#C8744F',
+                                backgroundColor: 'rgba(200, 116, 79, 0.08)',
                                 borderDash: [6, 6],
-                                borderWidth: 2.5,
+                                borderWidth: 2.6,
                                 tension: 0,
-                                pointBackgroundColor: '#F59E0B',
+                                fill: true,
+                                pointBackgroundColor: '#C8744F',
                                 pointRadius: 5
                             }
                         ]
@@ -209,11 +243,33 @@
                         responsive: true,
                         maintainAspectRatio: false,
                         plugins: {
-                            legend: { labels: { color: '#94A3B8', font: { family: 'Inter' } } }
+                            legend: {
+                                labels: {
+                                    color: textColor,
+                                    font: { family: 'DM Sans', size: 13, weight: '600' }
+                                }
+                            },
+                            tooltip: {
+                                backgroundColor: isDark ? '#1D2E37' : '#FFFFFF',
+                                titleColor: isDark ? '#EDEBE6' : '#2B2B26',
+                                bodyColor: isDark ? '#C5BFB5' : '#5C584E',
+                                borderColor: isDark ? 'rgba(221, 215, 202, 0.2)' : '#DDD7CA',
+                                borderWidth: 1,
+                                cornerRadius: 8,
+                                padding: 12
+                            }
                         },
                         scales: {
-                            x: { grid: { color: 'rgba(255,255,255,0.04)' }, ticks: { color: '#64748B' } },
-                            y: { beginAtZero: true, max: 500, grid: { color: 'rgba(255,255,255,0.04)' }, ticks: { color: '#64748B' } }
+                            x: {
+                                grid: { color: gridColor },
+                                ticks: { color: textColor, font: { family: 'DM Sans', size: 11 } }
+                            },
+                            y: {
+                                beginAtZero: true,
+                                max: 500,
+                                grid: { color: gridColor },
+                                ticks: { color: textColor, font: { family: 'DM Sans', size: 11 } }
+                            }
                         }
                     }
                 });
@@ -225,4 +281,3 @@
 
 </body>
 </html>
-

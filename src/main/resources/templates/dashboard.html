@@ -1,17 +1,17 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org"
       xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
-<head th:replace="~{fragments/layout :: head('Dashboard')}"></head>
+<head th:replace="~{fragments/layout :: head('Atmospheric Dashboard')}"></head>
 <body>
 
 <nav th:replace="~{fragments/layout :: navbar('dashboard')}"></nav>
 
 <main class="page">
     <!-- Page Header & City Switcher -->
-    <div class="page-header" style="display: flex; justify-content: space-between; align-items: flex-end; flex-wrap: wrap; gap: 16px;">
+    <div class="page-header" style="display: flex; justify-content: space-between; align-items: flex-end; flex-wrap: wrap; gap: 16px; margin-bottom: 24px;">
         <div>
-            <h1>Air Quality Surveillance Console</h1>
-            <p>Real-time continuous ambient telemetry strictly complying with CPCB National Standards</p>
+            <h1>The Air You Breathe</h1>
+            <p>Continuous ambient surveillance &amp; statutory CPCB environmental telemetry across India</p>
         </div>
 
         <!-- City Filter Dropdown -->
@@ -25,15 +25,100 @@
                     City
                 </option>
             </select>
-            <a th:if="${selectedCityId != null}" th:href="@{/}" class="btn btn-outline" style="padding: 8px 14px;">Reset</a>
+            <a th:if="${selectedCityId != null}" th:href="@{/}" class="btn btn-outline" style="padding: 8px 16px;">Reset</a>
         </form>
     </div>
+
+    <!-- 1. DYNAMIC SKY HERO WITH CIRCULAR BREATH GAUGE -->
+    <section class="sky-hero"
+             id="skyHero"
+             th:attr="data-aqi-tier=${data.avgAqi <= 50 ? 'Good' : (data.avgAqi <= 100 ? 'Satisfactory' : (data.avgAqi <= 200 ? 'Moderately Polluted' : (data.avgAqi <= 300 ? 'Poor' : (data.avgAqi <= 400 ? 'Very Poor' : 'Severe'))))}"
+             th:classappend="${data.avgAqi <= 50 ? 'sky-good' : (data.avgAqi <= 100 ? 'sky-satisfactory' : (data.avgAqi <= 200 ? 'sky-moderate' : (data.avgAqi <= 300 ? 'sky-poor' : (data.avgAqi <= 400 ? 'sky-very-poor' : 'sky-severe'))))}">
+
+        <!-- Atmospheric Floating Clouds / Particles -->
+        <div class="atmosphere-drift" aria-hidden="true">
+            <div class="cloud-particle cloud-p1"></div>
+            <div class="cloud-particle cloud-p2"></div>
+        </div>
+
+        <div class="hero-content">
+            <!-- Left: Circular Breath Gauge -->
+            <div class="gauge-container">
+                <div class="gauge-svg-wrap" aria-label="AQI Circular Meter">
+                    <svg viewBox="0 0 160 160">
+                        <circle class="gauge-bg-circle" cx="80" cy="80" r="66"></circle>
+                        <circle class="gauge-value-circle" id="breathGaugeCircle" cx="80" cy="80" r="66"
+                                stroke-dasharray="414"
+                                stroke-dashoffset="414"
+                                th:style="'stroke: ' + (${data.avgAqi <= 50} ? 'var(--aqi-good)' :
+                                                       (${data.avgAqi <= 100} ? 'var(--aqi-sat)' :
+                                                       (${data.avgAqi <= 200} ? 'var(--aqi-mod)' :
+                                                       (${data.avgAqi <= 300} ? 'var(--aqi-poor)' :
+                                                       (${data.avgAqi <= 400} ? 'var(--aqi-vpoor)' : 'var(--aqi-sev)')))))"></circle>
+                    </svg>
+                    <div class="gauge-center-content">
+                        <span class="gauge-center-num tabular-nums" id="breathGaugeVal" th:text="${#numbers.formatDecimal(data.avgAqi, 1, 0)}">145</span>
+                        <span class="gauge-center-label">INDEX</span>
+                    </div>
+                </div>
+
+                <div class="gauge-text-content">
+                    <span style="font-size: 0.8rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text-muted); display: block; margin-bottom: 4px;"
+                          th:text="${selectedCityId != null ? 'Regional Atmospheric State' : 'National Mean Atmosphere'}">
+                        National Mean Atmosphere
+                    </span>
+                    <h2 th:text="${data.avgAqi <= 50 ? 'Good &amp; Crisp Air' :
+                                  (data.avgAqi <= 100 ? 'Satisfactory Air Quality' :
+                                  (data.avgAqi <= 200 ? 'Moderately Polluted Sky' :
+                                  (data.avgAqi <= 300 ? 'Poor Ambient Quality' :
+                                  (data.avgAqi <= 400 ? 'Very Poor Air Conditions' : 'Severe Atmospheric Hazard'))))}">
+                        Moderately Polluted Sky
+                    </h2>
+                    <p style="margin: 0; font-size: 0.95rem; line-height: 1.5; color: var(--text-earth);"
+                       th:text="${data.avgAqi <= 50 ? 'Air quality is pristine; optimal for outdoor activities and exercise.' :
+                                 (data.avgAqi <= 100 ? 'Minor respiratory discomfort possible for highly sensitive individuals.' :
+                                 (data.avgAqi <= 200 ? 'Noticeable haze. Sensitive individuals with asthma or heart conditions should pace exertion.' :
+                                 (data.avgAqi <= 300 ? 'Breathing discomfort likely on prolonged outdoor exertion. Consider reducing strenuous outdoor activity.' :
+                                 (data.avgAqi <= 400 ? 'Heavy particulate burden. Mask recommended for children, seniors, and sensitive groups.' : 'Critical smog conditions. Avoid outdoor exposure; keep indoor air clean.'))))}">
+                        Noticeable haze. Sensitive individuals should pace outdoor exertion.
+                    </p>
+                </div>
+            </div>
+
+            <!-- Right: Organic Metric Pills -->
+            <div style="display: flex; flex-direction: column; gap: 12px;">
+                <div style="background: rgba(255, 255, 255, 0.7); backdrop-filter: blur(8px); border: 1px solid var(--border-stone); border-radius: var(--radius-sm); padding: 12px 18px; display: flex; justify-content: space-between; align-items: center;">
+                    <div style="display: flex; align-items: center; gap: 10px;">
+                        <span style="width: 10px; height: 10px; border-radius: 50%; background: var(--primary-forest);"></span>
+                        <span style="font-size: 0.88rem; font-weight: 600; color: var(--text-ink);">Monitoring Coverage</span>
+                    </div>
+                    <strong class="tabular-nums" style="font-family: 'Fraunces', serif; font-size: 1.3rem; color: var(--primary-forest);" th:text="${data.cityCount + ' Cities'}">11 Cities</strong>
+                </div>
+
+                <div style="background: rgba(255, 255, 255, 0.7); backdrop-filter: blur(8px); border: 1px solid var(--border-stone); border-radius: var(--radius-sm); padding: 12px 18px; display: flex; justify-content: space-between; align-items: center;">
+                    <div style="display: flex; align-items: center; gap: 10px;">
+                        <span style="width: 10px; height: 10px; border-radius: 50%; background: var(--primary-moss);"></span>
+                        <span style="font-size: 0.88rem; font-weight: 600; color: var(--text-ink);">Automated Continuous Stations</span>
+                    </div>
+                    <strong class="tabular-nums" style="font-family: 'Fraunces', serif; font-size: 1.3rem; color: var(--primary-moss);" th:text="${data.stationCount + ' Active'}">21 Active</strong>
+                </div>
+
+                <div style="background: rgba(255, 255, 255, 0.7); backdrop-filter: blur(8px); border: 1px solid var(--border-stone); border-radius: var(--radius-sm); padding: 12px 18px; display: flex; justify-content: space-between; align-items: center;">
+                    <div style="display: flex; align-items: center; gap: 10px;">
+                        <span style="width: 10px; height: 10px; border-radius: 50%; background: var(--terracotta);"></span>
+                        <span style="font-size: 0.88rem; font-weight: 600; color: var(--text-ink);">Active Threshold Alerts</span>
+                    </div>
+                    <strong class="tabular-nums" style="font-family: 'Fraunces', serif; font-size: 1.3rem; color: var(--terracotta);" th:text="${data.activeAlerts + ' Exceedances'}">4 Exceedances</strong>
+                </div>
+            </div>
+        </div>
+    </section>
 
     <!-- Official CPCB AQI Spectrum Reference Bar -->
     <div class="cpcb-spectrum-banner">
         <div class="cpcb-spectrum-header">
-            <span>Central Pollution Control Board (CPCB) AQI Classification Matrix</span>
-            <span style="font-size: 0.72rem; color: var(--text-muted); text-transform: none;">8-Pollutant Continuous Breakpoint Standard</span>
+            <span>Central Pollution Control Board (CPCB) Statutory Breakpoint Matrix</span>
+            <span style="font-size: 0.78rem; color: var(--text-muted); font-family: 'DM Sans', sans-serif;">8-Pollutant Continuous Linear Sub-Index Standard</span>
         </div>
         <div class="cpcb-spectrum-bar">
             <div class="spectrum-segment seg-good">
@@ -50,7 +135,7 @@
             </div>
             <div class="spectrum-segment seg-poor">
                 <span class="spectrum-title">Poor</span>
-                <span class="spectrum-range">201 – 300 &bull; Breathing issues</span>
+                <span class="spectrum-range">201 – 300 &bull; Breathing discomfort</span>
             </div>
             <div class="spectrum-segment seg-very-poor">
                 <span class="spectrum-title">Very Poor</span>
@@ -77,71 +162,26 @@
         </a>
     </div>
 
-    <!-- 1. Executive Telemetry Stats (KPIs) -->
-    <div class="grid-4" style="margin-bottom: 28px;">
-        <div class="glass-card stat-card">
-            <div class="stat-top">
-                <span class="stat-label" th:text="${selectedCityId != null ? 'Focus Urban Center' : 'Cities Monitored'}">Cities Monitored</span>
-                <div class="stat-icon">
-                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 21h18M3 7v14M21 7v14M6 7V3h12v4M9 11h2M9 15h2M13 11h2M13 15h2"></path></svg>
-                </div>
-            </div>
-            <div class="stat-value" style="color: var(--accent);" th:text="${data.cityCount}">11</div>
-            <div class="stat-caption" th:text="${selectedCityId != null ? 'Filtered active municipal jurisdiction' : 'Active nationwide monitoring coverage'}">Active nationwide monitoring coverage</div>
-        </div>
-
-        <div class="glass-card stat-card">
-            <div class="stat-top">
-                <span class="stat-label" th:text="${selectedCityId != null ? 'Active City Stations' : 'Active Stations'}">Active Stations</span>
-                <div class="stat-icon">
-                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4.93 19.07a10 10 0 0 1 0-14.14M7.76 16.24a6 6 0 0 1 0-8.48M12 12h.01M16.24 7.76a6 6 0 0 1 0 8.48M19.07 4.93a10 10 0 0 1 0 14.14"></path></svg>
-                </div>
-            </div>
-            <div class="stat-value" style="color: var(--aqi-satisfactory);" th:text="${data.stationCount}">21</div>
-            <div class="stat-caption">Continuous automated BAM/Beta-ray sensors</div>
-        </div>
-
-        <div class="glass-card stat-card">
-            <div class="stat-top">
-                <span class="stat-label" th:text="${selectedCityId != null ? 'City Average AQI' : 'National Mean AQI'}">National Mean AQI</span>
-                <div class="stat-icon">
-                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2a10 10 0 1 0 10 10H12V2z"></path></svg>
-                </div>
-            </div>
-            <div class="stat-value" style="color: var(--aqi-moderate);" th:text="${#numbers.formatDecimal(data.avgAqi, 1, 1)}">145.2</div>
-            <div class="stat-caption">CPCB sub-index max aggregation algorithm</div>
-        </div>
-
-        <div class="glass-card stat-card">
-            <div class="stat-top">
-                <span class="stat-label" th:text="${selectedCityId != null ? 'City Alert Flags' : 'Threshold Alerts'}">Threshold Alerts</span>
-                <div class="stat-icon">
-                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"></path></svg>
-                </div>
-            </div>
-            <div class="stat-value" style="color: var(--aqi-very-poor);" th:text="${data.activeAlerts}">4</div>
-            <div class="stat-caption">Exceedances requiring municipal response</div>
-        </div>
-    </div>
-
     <!-- 2. Station Monitoring Grid -->
     <div class="section-title">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline>
+        <!-- Leaf / Branch Icon -->
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10Z"></path>
+            <path d="M2 21c0-3 1.85-5.36 5.08-6C9.5 14.52 12 13 13 12"></path>
         </svg>
-        <span>Telemetry by Monitoring Station</span>
+        <span>Telemetry by Continuous Monitoring Station</span>
     </div>
 
-    <div class="grid-3" style="margin-bottom: 32px;">
-        <div th:if="${#lists.isEmpty(data.stationAqiList)}" class="glass-card" style="grid-column: 1 / -1; text-align: center; padding: 36px; color: var(--text-muted);">
-            No monitoring stations registered for this jurisdiction.
+    <div class="grid-3" style="margin-bottom: 36px;">
+        <div th:if="${#lists.isEmpty(data.stationAqiList)}" class="glass-card" style="grid-column: 1 / -1; text-align: center; padding: 48px; color: var(--text-muted);">
+            No monitoring stations registered for this municipal jurisdiction.
         </div>
 
         <div th:each="st : ${data.stationAqiList}"
              th:if="${selectedCityId == null or selectedCityId == st.cityId}"
              class="station-card">
 
-            <!-- Crisp 3px Top Category Indicator Strip -->
+            <!-- Organic Top Category Indicator Strip -->
             <div class="station-strip"
                  th:classappend="${st.aqiCategory == 'Good' ? 'strip-good' :
                                   (st.aqiCategory == 'Satisfactory' ? 'strip-satisfactory' :
@@ -155,19 +195,19 @@
                         <div class="station-name" th:text="${st.stationName}">Station Name</div>
                         <div class="station-location" th:text="${st.cityName + ', ' + st.state}">City, State</div>
                     </div>
-                    <div style="display: flex; align-items: center; gap: 5px; font-size: 0.72rem; color: #10B981;">
+                    <div style="display: flex; align-items: center; gap: 5px; font-size: 0.75rem; font-weight: 600; color: var(--primary-forest);">
                         <span class="pulse-dot"></span>
                         <span>Online</span>
                     </div>
                 </div>
 
                 <div class="station-aqi-row">
-                    <div class="station-aqi-number"
+                    <div class="station-aqi-number tabular-nums"
                          th:style="'color: ' + (${st.aqiCategory == 'Good'} ? 'var(--aqi-good)' :
-                                                (${st.aqiCategory == 'Satisfactory'} ? 'var(--aqi-satisfactory)' :
-                                                (${st.aqiCategory == 'Moderately Polluted'} ? 'var(--aqi-moderate)' :
+                                                (${st.aqiCategory == 'Satisfactory'} ? 'var(--aqi-sat)' :
+                                                (${st.aqiCategory == 'Moderately Polluted'} ? 'var(--aqi-mod)' :
                                                 (${st.aqiCategory == 'Poor'} ? 'var(--aqi-poor)' :
-                                                (${st.aqiCategory == 'Very Poor'} ? 'var(--aqi-very-poor)' : 'var(--aqi-severe)')))))"
+                                                (${st.aqiCategory == 'Very Poor'} ? 'var(--aqi-vpoor)' : 'var(--aqi-sev)')))))"
                          th:text="${st.aqiValue != null ? #numbers.formatDecimal(st.aqiValue, 1, 0) : 'N/A'}">
                         185
                     </div>
@@ -182,64 +222,64 @@
                 </div>
 
                 <div class="station-meta-row">
-                    <span>Dominant Pollutant</span>
-                    <strong th:text="${st.dominantPollutant ?: 'PM2.5'}">PM2.5</strong>
+                    <span>Dominant Pollutant Driver</span>
+                    <strong style="color: var(--text-ink);" th:text="${st.dominantPollutant ?: 'PM2.5'}">PM2.5</strong>
                 </div>
             </div>
 
             <div class="station-card-footer">
                 <span>
-                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align: -1px; margin-right: 3px;"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align: -1px; margin-right: 4px;"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
                     <span th:text="${st.recordDate != null ? #temporals.format(st.recordDate, 'dd MMM yyyy') : 'Recent'}">Recent</span>
                 </span>
-                <span style="font-weight: 500; color: var(--text-dim);" th:text="${st.dataSource}">Calculated</span>
+                <span style="font-weight: 500; color: var(--text-muted);" th:text="${st.dataSource}">Calculated</span>
             </div>
         </div>
     </div>
 
-    <!-- 3. AQI Comparison Chart -->
-    <div class="glass-card" style="margin-bottom: 28px;">
+    <!-- 3. AQI Comparison Chart (Warm Organic Styling) -->
+    <div class="glass-card" style="margin-bottom: 36px;">
         <div class="section-title">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                 <line x1="18" y1="20" x2="18" y2="10"></line>
                 <line x1="12" y1="20" x2="12" y2="4"></line>
                 <line x1="6" y1="20" x2="6" y2="14"></line>
             </svg>
             <span>Air Quality Index Spectrum by Active Station</span>
         </div>
-        <div style="height: 280px; position: relative;">
+        <div style="height: 300px; position: relative;">
             <canvas id="dashboardAqiChart"></canvas>
         </div>
     </div>
 
     <!-- 4. Weather Telemetry & Alerts Split View -->
-    <div class="grid-2" style="margin-bottom: 28px;">
+    <div class="grid-2" style="margin-bottom: 36px;">
         <!-- Recent Alerts -->
         <div class="glass-card" style="display: flex; flex-direction: column;">
             <div class="section-title">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#F97316" stroke-width="2">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--terracotta)" stroke-width="2">
                     <path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"></path>
                     <line x1="12" y1="9" x2="12" y2="13"></line>
                     <line x1="12" y1="17" x2="12.01" y2="17"></line>
                 </svg>
-                <span>Automated Trigger &amp; Exceedance Alerts</span>
+                <span>Automated Environmental Exceedances</span>
             </div>
 
-            <div style="overflow-y: auto; max-height: 320px;">
-                <div th:if="${#lists.isEmpty(data.recentAlerts)}" style="text-align: center; padding: 28px; color: var(--text-muted); font-size: 0.88rem;">
+            <div style="overflow-y: auto; max-height: 340px;">
+                <div th:if="${#lists.isEmpty(data.recentAlerts)}" style="text-align: center; padding: 36px; color: var(--text-muted); font-size: 0.9rem;">
                     No active threshold alerts. All telemetry operating within nominal tolerances.
                 </div>
                 <div th:each="al : ${data.recentAlerts}"
-                     style="padding: 10px 12px; border-bottom: 1px solid var(--border-subtle); display: flex; gap: 10px; align-items: flex-start;">
+                     style="padding: 12px 14px; border-bottom: 1px solid var(--border-stone); display: flex; gap: 12px; align-items: flex-start;">
                     <span class="station-category-badge"
-                          th:classappend="${al.severity == 'Critical' ? 'sev-critical' :
-                                           (al.severity == 'High' ? 'sev-high' :
-                                           (al.severity == 'Medium' ? 'sev-medium' : 'sev-low'))}"
+                          th:classappend="${al.severity == 'Critical' ? 'badge-severe' :
+                                           (al.severity == 'High' ? 'badge-poor' :
+                                           (al.severity == 'Medium' ? 'badge-moderate' : 'badge-good'))}"
                           th:text="${al.severity}">High</span>
                     <div style="flex: 1;">
-                        <div style="font-size: 0.84rem; color: var(--text-primary); line-height: 1.4;" th:text="${al.message}">Alert message</div>
-                        <div style="font-size: 0.72rem; color: var(--text-muted); margin-top: 3px;">
-                            <span style="font-weight: 600; color: var(--text-secondary);" th:text="${al.stationName}">Station</span> &bull;
+                        <div style="font-size: 0.88rem; color: var(--text-ink); line-height: 1.45;" th:text="${al.message}">Alert message</div>
+                        <div style="font-size: 0.76rem; color: var(--text-muted); margin-top: 4px;">
+                            <span style="font-weight: 600; color: var(--text-earth);" th:text="${al.stationName}">Station</span> &bull;
                             <span th:text="${#temporals.format(al.alertTimestamp, 'dd MMM yyyy HH:mm')}">Date</span>
                         </div>
                     </div>
@@ -247,25 +287,39 @@
             </div>
         </div>
 
-        <!-- Weather Conditions -->
+        <!-- Illustrated Meteorological & Wind Conditions -->
         <div class="glass-card">
             <div class="section-title">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#38BDF8" stroke-width="2">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--sky-azure)" stroke-width="2">
                     <path d="M14 4v10.54a4 4 0 1 1-4 0V4a2 2 0 0 1 4 0Z"></path>
                 </svg>
-                <span>Live Meteorological Ingestion (Open-Meteo REST API)</span>
+                <span>Live Meteorological Conditions (Open-Meteo REST API)</span>
             </div>
-            <div style="overflow-y: auto; max-height: 320px;">
+
+            <div style="overflow-y: auto; max-height: 340px;">
                 <div th:each="w : ${data.weatherList}"
-                     style="padding: 10px 12px; margin-bottom: 6px; border-radius: 6px; background: rgba(255,255,255,0.02); display: flex; justify-content: space-between; align-items: center; border: 1px solid var(--border-subtle);">
+                     style="padding: 12px 14px; margin-bottom: 8px; border-radius: var(--radius-sm); background: var(--bg-surface); display: flex; justify-content: space-between; align-items: center; border: 1px solid var(--border-stone);">
                     <div>
-                        <div style="font-weight: 600; font-size: 0.88rem; color: var(--text-primary);" th:text="${w.cityName}">City</div>
-                        <div style="font-size: 0.72rem; color: var(--text-dim);" th:text="${w.dataSource}">Open-Meteo API</div>
+                        <div style="font-weight: 600; font-size: 0.95rem; color: var(--text-ink);" th:text="${w.cityName}">City</div>
+                        <div style="font-size: 0.74rem; color: var(--text-muted);" th:text="${w.dataSource}">Open-Meteo API</div>
                     </div>
-                    <div style="display: flex; gap: 14px; font-size: 0.82rem; font-weight: 500;">
-                        <span title="Temperature" style="color: #F87171;" th:text="${w.temperature + ' °C'}">32 °C</span>
-                        <span title="Relative Humidity" style="color: #38BDF8;" th:text="${w.humidity + '% RH'}">65% RH</span>
-                        <span title="Surface Wind" style="color: #34D399;" th:text="${w.windSpeed + ' km/h ' + w.windDirection}">12 km/h NW</span>
+
+                    <div style="display: flex; gap: 16px; align-items: center; font-size: 0.85rem; font-weight: 600;">
+                        <!-- Temperature -->
+                        <span title="Ambient Temperature" style="color: var(--terracotta); display: inline-flex; align-items: center; gap: 4px;">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 4v10.54a4 4 0 1 1-4 0V4a2 2 0 0 1 4 0Z"></path></svg>
+                            <span th:text="${w.temperature + ' °C'}">32 °C</span>
+                        </span>
+                        <!-- Humidity -->
+                        <span title="Relative Humidity" style="color: var(--sky-azure); display: inline-flex; align-items: center; gap: 4px;">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"></path></svg>
+                            <span th:text="${w.humidity + '% RH'}">65% RH</span>
+                        </span>
+                        <!-- Wind Compass -->
+                        <span title="Surface Wind Direction &amp; Speed" style="color: var(--primary-forest); display: inline-flex; align-items: center; gap: 4px;">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+                            <span th:text="${w.windSpeed + ' km/h ' + w.windDirection}">12 km/h NW</span>
+                        </span>
                     </div>
                 </div>
             </div>
@@ -275,7 +329,7 @@
     <!-- 5. City-wise Average Table -->
     <div class="glass-card">
         <div class="section-title">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                 <polygon points="12 2 2 7 12 12 22 7 12 2"></polygon>
                 <polyline points="2 17 12 22 22 17"></polyline>
                 <polyline points="2 12 12 17 22 12"></polyline>
@@ -294,14 +348,14 @@
             </thead>
             <tbody>
                 <tr th:each="row : ${data.cityAvgAqi}">
-                    <td style="font-weight: 600; color: var(--text-primary);" th:text="${row.city_name}">Delhi</td>
+                    <td style="font-weight: 600; color: var(--text-ink);" th:text="${row.city_name}">Delhi</td>
                     <td th:text="${row.state}">Delhi</td>
-                    <td style="font-weight: 700;"
+                    <td style="font-family: 'Fraunces', serif; font-size: 1.15rem; font-weight: 700;"
                         th:styleappend="'color: ' + (${row.avg_category == 'Good'} ? 'var(--aqi-good)' :
-                                                    (${row.avg_category == 'Satisfactory'} ? 'var(--aqi-satisfactory)' :
-                                                    (${row.avg_category == 'Moderately Polluted'} ? 'var(--aqi-moderate)' :
+                                                    (${row.avg_category == 'Satisfactory'} ? 'var(--aqi-sat)' :
+                                                    (${row.avg_category == 'Moderately Polluted'} ? 'var(--aqi-mod)' :
                                                     (${row.avg_category == 'Poor'} ? 'var(--aqi-poor)' :
-                                                    (${row.avg_category == 'Very Poor'} ? 'var(--aqi-very-poor)' : 'var(--aqi-severe)')))))"
+                                                    (${row.avg_category == 'Very Poor'} ? 'var(--aqi-vpoor)' : 'var(--aqi-sev)')))))"
                         th:text="${row.avg_aqi}">225.4</td>
                     <td>
                         <span class="station-category-badge"
@@ -324,6 +378,20 @@
 <script th:inline="javascript">
 /*<![CDATA[*/
     document.addEventListener('DOMContentLoaded', () => {
+        // Animate Circular Breath Gauge Arc
+        const aqiVal = Number(/*[[${data.avgAqi}]]*/ 145);
+        const gaugeCircle = document.getElementById('breathGaugeCircle');
+        if (gaugeCircle) {
+            // Full arc circumference = 2 * PI * 66 = ~414.69
+            const circumference = 414.69;
+            const fraction = Math.min(Math.max(aqiVal / 500, 0), 1);
+            const targetOffset = circumference - (fraction * circumference);
+            setTimeout(() => {
+                gaugeCircle.style.strokeDashoffset = targetOffset;
+            }, 150);
+        }
+
+        // Render Station Comparison Bar Chart
         const stationList = /*[[${data.stationAqiList}]]*/ [];
         if (stationList && stationList.length > 0) {
             const labels = stationList.map(s => s.stationName);

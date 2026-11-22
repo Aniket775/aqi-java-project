@@ -1,78 +1,237 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+/* ==========================================================================
+   AQI SENTINEL — "THE AIR YOU BREATHE"
+   Human-Crafted, Nature-Inspired Visual Identity
+   Palette: Warm Paper Linen (#F7F5EE), Deep Forest Green (#2F4A3A),
+   Terracotta (#C8744F), Sand (#D9C7A0), Soft Sky Mist (#A9C5D6)
+   Typography: Fraunces (Display Serif), DM Sans (Humanist UI), JetBrains Mono
+   ========================================================================== */
 
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300..800;1,9..40,300..800&family=Fraunces:ital,opsz,wght@0,9..144,300..800;1,9..144,300..800&family=JetBrains+Mono:wght@400;500;600;700&display=swap');
+
+/* ==========================================================================
+   1. DESIGN TOKENS & COLOR SYSTEM
+   ========================================================================== */
 :root {
-    /* Sophisticated Enterprise Palette */
-    --bg-primary: #0B0F19;
-    --bg-secondary: #0F172A;
-    --bg-surface: #131C2E;
-    --bg-card: #152033;
-    --bg-card-hover: #19263D;
-    --bg-input: #0E1524;
-    
-    --border-color: rgba(255, 255, 255, 0.08);
-    --border-subtle: rgba(255, 255, 255, 0.04);
-    --border-focus: #6366F1;
+    /* Base Paper & Linen Canvas (Light Theme - Default) */
+    --bg-canvas: #F7F5EE;
+    --bg-surface: #FFFFFF;
+    --bg-card: #FAF8F3;
+    --bg-card-hover: #FFFFFF;
+    --bg-muted: #EAE6DB;
+    --bg-subtle: #DFD9CC;
+    --bg-input: #FFFFFF;
 
-    --text-primary: #F8FAFC;
-    --text-secondary: #94A3B8;
-    --text-muted: #64748B;
-    --text-dim: #475569;
+    /* Primary Forest & Moss */
+    --primary-forest: #2F4A3A;
+    --primary-moss: #4F6F52;
+    --primary-foliage: #3E5C48;
+    --primary-hover: #233A2D;
+    --primary-light: #EBF1ED;
 
-    --accent: #6366F1;
-    --accent-hover: #4F46E5;
-    --accent-subtle: rgba(99, 102, 241, 0.12);
-    --accent-border: rgba(99, 102, 241, 0.3);
+    /* Earth & Sky Secondary Accents */
+    --terracotta: #C8744F;
+    --terracotta-light: #F9EBE5;
+    --sand: #D9C7A0;
+    --sand-light: #F7F3E9;
+    --sky-mist: #A9C5D6;
+    --sky-mist-light: #EBF3F8;
+    --sky-azure: #6B9AC4;
 
-    /* Official CPCB AQI Category Colors */
-    --aqi-good: #10B981;
-    --aqi-satisfactory: #84CC16;
-    --aqi-moderate: #F59E0B;
-    --aqi-poor: #F97316;
-    --aqi-very-poor: #EF4444;
-    --aqi-severe: #991B1B;
+    /* Text & Ink (Warm Charcoal, No Pure Black) */
+    --text-ink: #2B2B26;
+    --text-forest: #2F4A3A;
+    --text-earth: #5C584E;
+    --text-muted: #848074;
+    --text-faint: #ACA79A;
 
-    --radius-sm: 6px;
-    --radius: 10px;
-    --radius-lg: 14px;
-    --nav-height: 64px;
+    /* Borders & Outlines */
+    --border-stone: #DDD7CA;
+    --border-subtle: rgba(47, 74, 58, 0.08);
+    --border-focus: #2F4A3A;
+
+    /* Earthy CPCB AQI Scale (Desaturated & WCAG AA Compliant) */
+    --aqi-good: #2E7D32;
+    --aqi-good-bg: #E8F5E9;
+    --aqi-good-text: #1B5E20;
+
+    --aqi-sat: #558B2F;
+    --aqi-sat-bg: #F1F8E9;
+    --aqi-sat-text: #33691E;
+
+    --aqi-mod: #B26A00;
+    --aqi-mod-bg: #FFF8E1;
+    --aqi-mod-text: #E65100;
+
+    --aqi-poor: #BF360C;
+    --aqi-poor-bg: #FBE9E7;
+    --aqi-poor-text: #BF360C;
+
+    --aqi-vpoor: #A71D2A;
+    --aqi-vpoor-bg: #FFEBEE;
+    --aqi-vpoor-text: #880E4F;
+
+    --aqi-sev: #581845;
+    --aqi-sev-bg: #FCE4EC;
+    --aqi-sev-text: #4A148C;
+
+    /* Backward compatibility mappings for legacy classes */
+    --bg-primary: var(--bg-canvas);
+    --bg-secondary: var(--bg-muted);
+    --text-primary: var(--text-ink);
+    --text-secondary: var(--text-earth);
+    --accent: var(--primary-forest);
+    --accent-hover: var(--primary-hover);
+    --border-color: var(--border-stone);
+
+    /* Radii & Shadows */
+    --radius-sm: 8px;
+    --radius: 18px;
+    --radius-card: 22px 26px 20px 24px; /* Organic asymmetrical curve */
+    --radius-pill: 50px;
+    --shadow-soft: 0 4px 20px rgba(47, 74, 58, 0.05);
+    --shadow-hover: 0 10px 30px rgba(47, 74, 58, 0.09);
+    --shadow-card: 0 6px 24px rgba(43, 43, 38, 0.04);
 }
 
-* {
+/* Optional "Night Sky" Dark Theme */
+[data-theme="dark"] {
+    --bg-canvas: #121E24;
+    --bg-surface: #18262E;
+    --bg-card: #1D2E37;
+    --bg-card-hover: #223742;
+    --bg-muted: #16242B;
+    --bg-subtle: #21343E;
+    --bg-input: #152229;
+
+    --primary-forest: #5C8C70;
+    --primary-moss: #76A786;
+    --primary-foliage: #659A7A;
+    --primary-hover: #4B785D;
+    --primary-light: rgba(92, 140, 112, 0.16);
+
+    --terracotta: #E28C67;
+    --terracotta-light: rgba(226, 140, 103, 0.14);
+    --sand: #E6D8B8;
+    --sand-light: rgba(230, 216, 184, 0.12);
+    --sky-mist: #B9D5E6;
+    --sky-mist-light: rgba(185, 213, 230, 0.14);
+
+    --text-ink: #EDEBE6;
+    --text-forest: #A8CEB8;
+    --text-earth: #C5BFB5;
+    --text-muted: #918B80;
+    --text-faint: #676359;
+
+    --border-stone: rgba(221, 215, 202, 0.16);
+    --border-subtle: rgba(255, 255, 255, 0.06);
+    --border-focus: #5C8C70;
+
+    --shadow-soft: 0 4px 20px rgba(0, 0, 0, 0.25);
+    --shadow-hover: 0 10px 30px rgba(0, 0, 0, 0.35);
+    --shadow-card: 0 6px 24px rgba(0, 0, 0, 0.25);
+}
+
+/* ==========================================================================
+   2. GLOBAL FOUNDATIONS & PAPER GRAIN
+   ========================================================================== */
+*, *::before, *::after {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
 }
 
+html {
+    scroll-behavior: smooth;
+    font-size: 16px;
+    background-color: var(--bg-canvas);
+    color: var(--text-ink);
+}
+
 body {
-    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-    background-color: var(--bg-primary);
-    color: var(--text-primary);
+    font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background-color: var(--bg-canvas);
+    color: var(--text-ink);
     min-height: 100vh;
     display: flex;
     flex-direction: column;
+    line-height: 1.6;
     -webkit-font-smoothing: antialiased;
-    letter-spacing: -0.011em;
+    -moz-osx-font-smoothing: grayscale;
+    position: relative;
+    overflow-x: hidden;
 }
 
-/* Scrollbar */
-::-webkit-scrollbar { width: 6px; height: 6px; }
-::-webkit-scrollbar-track { background: var(--bg-primary); }
-::-webkit-scrollbar-thumb { background: #1E293B; border-radius: 3px; }
-::-webkit-scrollbar-thumb:hover { background: #334155; }
+/* Subtle Analog Paper Texture (Non-digital tactile feeling) */
+body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 9999;
+    pointer-events: none;
+    opacity: 0.035;
+    mix-blend-mode: multiply;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+}
 
-/* Navbar */
+[data-theme="dark"] body::before {
+    opacity: 0.025;
+    mix-blend-mode: screen;
+}
+
+/* ==========================================================================
+   3. TYPOGRAPHY
+   ========================================================================== */
+h1, h2, h3, h4, .font-serif {
+    font-family: 'Fraunces', Georgia, serif;
+    font-feature-settings: "liga" 1, "calt" 1;
+    color: var(--text-ink);
+    font-weight: 600;
+    line-height: 1.2;
+    letter-spacing: -0.015em;
+}
+
+h1 { font-size: clamp(2.2rem, 3.8vw, 3.2rem); }
+h2 { font-size: clamp(1.6rem, 2.6vw, 2.2rem); }
+h3 { font-size: clamp(1.2rem, 1.8vw, 1.5rem); }
+
+p {
+    color: var(--text-earth);
+    margin-bottom: 0.8rem;
+}
+
+.tabular-nums {
+    font-variant-numeric: tabular-nums;
+    font-feature-settings: "tnum" 1;
+}
+
+code, kbd, samp, pre {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.88em;
+}
+
+/* ==========================================================================
+   4. NAVIGATION BAR & THEME SWITCHER
+   ========================================================================== */
 .navbar {
-    height: var(--nav-height);
-    background: rgba(11, 15, 25, 0.92);
-    backdrop-filter: blur(12px);
-    border-bottom: 1px solid var(--border-color);
     position: sticky;
     top: 0;
-    z-index: 100;
+    z-index: 900;
+    height: 72px;
+    background: rgba(247, 245, 238, 0.92);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    border-bottom: 1px solid var(--border-stone);
+    padding: 0 36px;
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 0 28px;
+    transition: background 0.3s ease, border-color 0.3s ease;
+}
+
+[data-theme="dark"] .navbar {
+    background: rgba(18, 30, 36, 0.92);
 }
 
 .nav-brand {
@@ -80,409 +239,503 @@ body {
     align-items: center;
     gap: 12px;
     text-decoration: none;
-    color: var(--text-primary);
+    color: var(--text-ink);
+    transition: transform 0.2s ease;
+}
+
+.nav-brand:hover {
+    transform: translateY(-1px);
 }
 
 .brand-icon {
-    width: 32px;
-    height: 32px;
-    border-radius: 8px;
-    background: linear-gradient(135deg, #4F46E5, #06B6D4);
+    width: 38px;
+    height: 38px;
+    border-radius: 12px;
+    background: var(--primary-forest);
     display: flex;
     align-items: center;
     justify-content: center;
-    box-shadow: 0 2px 8px rgba(79, 70, 229, 0.3);
+    color: #FFFFFF;
+    box-shadow: 0 4px 12px rgba(47, 74, 58, 0.18);
+    transition: background 0.3s ease, transform 0.25s ease;
+}
+
+.nav-brand:hover .brand-icon {
+    transform: rotate(-6deg);
 }
 
 .brand-text {
-    font-size: 1.05rem;
+    font-family: 'Fraunces', Georgia, serif;
+    font-size: 1.35rem;
     font-weight: 700;
-    letter-spacing: -0.02em;
-    color: var(--text-primary);
+    color: var(--primary-forest);
+    letter-spacing: -0.01em;
+}
+
+[data-theme="dark"] .brand-text {
+    color: #EDEBE6;
 }
 
 .brand-badge {
-    font-size: 0.68rem;
-    font-weight: 600;
-    background: rgba(99, 102, 241, 0.15);
-    color: #A5B4FC;
-    padding: 2px 7px;
-    border-radius: 4px;
-    border: 1px solid rgba(99, 102, 241, 0.25);
-    margin-left: 6px;
+    font-size: 0.7rem;
+    font-weight: 700;
     text-transform: uppercase;
-    letter-spacing: 0.05em;
+    letter-spacing: 0.06em;
+    background: var(--primary-light);
+    color: var(--primary-forest);
+    padding: 2px 8px;
+    border-radius: var(--radius-pill);
+    border: 1px solid rgba(47, 74, 58, 0.15);
+    margin-left: 6px;
 }
 
 .nav-links {
     display: flex;
     align-items: center;
-    gap: 4px;
+    gap: 6px;
     list-style: none;
 }
 
 .nav-links a {
-    color: var(--text-secondary);
+    color: var(--text-earth);
     text-decoration: none;
-    padding: 7px 13px;
-    border-radius: var(--radius-sm);
-    font-size: 0.88rem;
+    padding: 8px 16px;
+    border-radius: var(--radius-pill);
+    font-size: 0.92rem;
     font-weight: 500;
-    transition: all 0.15s ease;
+    transition: all 0.2s ease;
     display: inline-flex;
     align-items: center;
-    gap: 6px;
+    gap: 7px;
+    border: 1px solid transparent;
 }
 
 .nav-links a:hover {
-    color: var(--text-primary);
-    background: rgba(255, 255, 255, 0.05);
+    color: var(--primary-forest);
+    background: var(--bg-muted);
 }
 
 .nav-links a.active {
-    color: #FFFFFF;
-    background: var(--accent-subtle);
-    border: 1px solid var(--accent-border);
+    color: var(--primary-forest);
+    background: var(--primary-light);
+    border-color: rgba(47, 74, 58, 0.18);
+    font-weight: 600;
+}
+
+[data-theme="dark"] .nav-links a.active {
+    color: #EDEBE6;
+    background: rgba(92, 140, 112, 0.25);
+    border-color: rgba(92, 140, 112, 0.4);
 }
 
 .nav-user {
     display: flex;
     align-items: center;
-    gap: 12px;
+    gap: 14px;
+}
+
+/* Organic Sun/Moon Theme Toggle Button */
+.theme-toggle-btn {
+    appearance: none;
+    background: var(--bg-muted);
+    border: 1px solid var(--border-stone);
+    border-radius: var(--radius-pill);
+    width: 38px;
+    height: 38px;
+    color: var(--text-ink);
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+}
+
+.theme-toggle-btn:hover {
+    background: var(--bg-subtle);
+    transform: rotate(15deg);
 }
 
 .user-pill {
     display: flex;
     align-items: center;
     gap: 8px;
-    padding: 4px 10px 4px 5px;
-    border-radius: 20px;
-    background: rgba(255, 255, 255, 0.04);
-    border: 1px solid var(--border-color);
+    padding: 4px 12px 4px 6px;
+    border-radius: var(--radius-pill);
+    background: var(--bg-muted);
+    border: 1px solid var(--border-stone);
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--text-ink);
 }
 
 .user-avatar {
-    width: 24px;
-    height: 24px;
+    width: 26px;
+    height: 26px;
     border-radius: 50%;
-    background: linear-gradient(135deg, #6366F1, #818CF8);
+    background: var(--primary-forest);
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 0.72rem;
+    font-size: 0.75rem;
     font-weight: 700;
     color: #FFFFFF;
-}
-
-.user-name {
-    font-size: 0.82rem;
-    font-weight: 600;
-    color: var(--text-primary);
 }
 
 .logout-btn {
     background: transparent;
-    border: 1px solid var(--border-color);
-    color: var(--text-secondary);
-    padding: 5px 11px;
-    border-radius: var(--radius-sm);
+    border: 1px solid var(--border-stone);
+    color: var(--text-earth);
+    padding: 6px 14px;
+    border-radius: var(--radius-pill);
     font-size: 0.82rem;
+    font-weight: 600;
     cursor: pointer;
-    transition: all 0.15s;
+    transition: all 0.2s;
 }
 
 .logout-btn:hover {
-    color: #F87171;
-    border-color: rgba(239, 68, 68, 0.3);
-    background: rgba(239, 68, 68, 0.08);
+    color: #B71C1C;
+    border-color: rgba(183, 28, 28, 0.3);
+    background: #FFEBEE;
 }
 
-/* Page Container */
+/* ==========================================================================
+   5. DYNAMIC SKY HERO & ATMOSPHERIC PARTICLES
+   ========================================================================== */
+.sky-hero {
+    position: relative;
+    border-radius: 28px;
+    padding: 44px 40px;
+    margin-bottom: 32px;
+    overflow: hidden;
+    transition: background 1.2s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: var(--shadow-card);
+    border: 1px solid var(--border-stone);
+}
+
+/* Sky State: Good (Clear blue-gold morning sky) */
+.sky-hero.sky-good,
+.sky-hero[data-aqi-tier="Good"] {
+    background: linear-gradient(135deg, #DCEEFB 0%, #E8F5E9 55%, var(--bg-card) 100%);
+}
+
+/* Sky State: Satisfactory (Soft fresh meadow breeze) */
+.sky-hero.sky-satisfactory,
+.sky-hero[data-aqi-tier="Satisfactory"] {
+    background: linear-gradient(135deg, #E2F4EC 0%, #EDF7ED 55%, var(--bg-card) 100%);
+}
+
+/* Sky State: Moderate (Warm golden morning haze) */
+.sky-hero.sky-moderate,
+.sky-hero[data-aqi-tier="Moderately Polluted"] {
+    background: linear-gradient(135deg, #FDF0DC 0%, #FFF8E1 55%, var(--bg-card) 100%);
+}
+
+/* Sky State: Poor (Terracotta dust haze) */
+.sky-hero.sky-poor,
+.sky-hero[data-aqi-tier="Poor"] {
+    background: linear-gradient(135deg, #FCE8DD 0%, #FBE9E7 55%, var(--bg-card) 100%);
+}
+
+/* Sky State: Very Poor (Dense burnt autumn smog) */
+.sky-hero.sky-very-poor,
+.sky-hero[data-aqi-tier="Very Poor"] {
+    background: linear-gradient(135deg, #F6DFE3 0%, #FFEBEE 55%, var(--bg-card) 100%);
+}
+
+/* Sky State: Severe (Smoggy charcoal berry twilight) */
+.sky-hero.sky-severe,
+.sky-hero[data-aqi-tier="Severe"] {
+    background: linear-gradient(135deg, #E8D9E3 0%, #FCE4EC 55%, var(--bg-card) 100%);
+}
+
+/* Dark mode atmospheric twilight sky overrides */
+[data-theme="dark"] .sky-hero.sky-good,
+[data-theme="dark"] .sky-hero[data-aqi-tier="Good"] {
+    background: linear-gradient(135deg, #182B34 0%, #17332A 60%, var(--bg-card) 100%);
+}
+[data-theme="dark"] .sky-hero.sky-satisfactory,
+[data-theme="dark"] .sky-hero[data-aqi-tier="Satisfactory"] {
+    background: linear-gradient(135deg, #1B3130 0%, #1A3828 60%, var(--bg-card) 100%);
+}
+[data-theme="dark"] .sky-hero.sky-moderate,
+[data-theme="dark"] .sky-hero[data-aqi-tier="Moderately Polluted"] {
+    background: linear-gradient(135deg, #2B2A22 0%, #2A2518 60%, var(--bg-card) 100%);
+}
+[data-theme="dark"] .sky-hero.sky-poor,
+[data-theme="dark"] .sky-hero[data-aqi-tier="Poor"] {
+    background: linear-gradient(135deg, #2D231E 0%, #301F18 60%, var(--bg-card) 100%);
+}
+[data-theme="dark"] .sky-hero.sky-very-poor,
+[data-theme="dark"] .sky-hero[data-aqi-tier="Very Poor"] {
+    background: linear-gradient(135deg, #2E1D22 0%, #2E1719 60%, var(--bg-card) 100%);
+}
+[data-theme="dark"] .sky-hero.sky-severe,
+[data-theme="dark"] .sky-hero[data-aqi-tier="Severe"] {
+    background: linear-gradient(135deg, #291A25 0%, #26121F 60%, var(--bg-card) 100%);
+}
+
+/* Floating Mist & Atmosphere Drift Particles */
+.atmosphere-drift {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    overflow: hidden;
+    z-index: 1;
+}
+
+.cloud-particle {
+    position: absolute;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(255, 255, 255, 0.45) 0%, rgba(255, 255, 255, 0) 70%);
+    filter: blur(8px);
+    animation: driftFloat 24s ease-in-out infinite alternate;
+}
+
+[data-theme="dark"] .cloud-particle {
+    background: radial-gradient(circle, rgba(255, 255, 255, 0.12) 0%, rgba(255, 255, 255, 0) 70%);
+}
+
+.cloud-p1 { width: 340px; height: 180px; top: -20px; left: -40px; animation-duration: 30s; }
+.cloud-p2 { width: 420px; height: 220px; bottom: -40px; right: 10%; animation-duration: 36s; animation-delay: -6s; }
+
+@keyframes driftFloat {
+    0%   { transform: translate(0, 0) scale(1); }
+    50%  { transform: translate(30px, 15px) scale(1.05); }
+    100% { transform: translate(-20px, 8px) scale(0.98); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .cloud-particle { animation: none !important; }
+}
+
+/* ==========================================================================
+   6. BREATH GAUGE & HERO METRICS
+   ========================================================================== */
+.hero-content {
+    position: relative;
+    z-index: 2;
+    display: grid;
+    grid-template-columns: 1.2fr 0.8fr;
+    gap: 36px;
+    align-items: center;
+}
+
+.gauge-container {
+    display: flex;
+    align-items: center;
+    gap: 28px;
+}
+
+.gauge-svg-wrap {
+    position: relative;
+    width: 170px;
+    height: 170px;
+    flex-shrink: 0;
+}
+
+.gauge-svg-wrap svg {
+    width: 100%;
+    height: 100%;
+    transform: rotate(-90deg);
+}
+
+.gauge-bg-circle {
+    fill: none;
+    stroke: var(--border-stone);
+    stroke-width: 12;
+}
+
+.gauge-value-circle {
+    fill: none;
+    stroke-width: 12;
+    stroke-linecap: round;
+    transition: stroke-dashoffset 1.4s cubic-bezier(0.34, 1.56, 0.64, 1), stroke 0.6s ease;
+}
+
+.gauge-center-content {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+}
+
+.gauge-center-num {
+    font-family: 'Fraunces', Georgia, serif;
+    font-size: 2.8rem;
+    font-weight: 700;
+    line-height: 1;
+    color: var(--text-ink);
+}
+
+.gauge-center-label {
+    font-size: 0.7rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--text-muted);
+    margin-top: 2px;
+}
+
+.gauge-text-content h2 {
+    font-size: 2rem;
+    margin-bottom: 6px;
+    color: var(--text-ink);
+}
+
+.health-advisory-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 14px;
+    border-radius: var(--radius-pill);
+    font-size: 0.88rem;
+    font-weight: 600;
+    margin-top: 8px;
+    border: 1px solid currentColor;
+}
+
+/* ==========================================================================
+   7. CARDS & NATURE ASYMMETRICAL CONTAINERS
+   ========================================================================== */
 .page {
-    max-width: 1400px;
+    max-width: 1380px;
     margin: 0 auto;
-    padding: 24px 28px 56px 28px;
+    padding: 32px 36px 64px 36px;
     flex: 1;
     width: 100%;
 }
 
-.page-header {
-    margin-bottom: 24px;
-}
-
-.page-header h1 {
-    font-size: 1.65rem;
-    font-weight: 800;
-    letter-spacing: -0.025em;
-    color: var(--text-primary);
-    margin-bottom: 4px;
-}
-
-.page-header p {
-    color: var(--text-secondary);
-    font-size: 0.9rem;
-}
-
-/* Operational Status Dot */
-.status-indicator {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    font-size: 0.75rem;
-    font-weight: 500;
-    color: #10B981;
-    background: rgba(16, 185, 129, 0.1);
-    padding: 3px 8px;
-    border-radius: 12px;
-    border: 1px solid rgba(16, 185, 129, 0.25);
-}
-
-.pulse-dot {
-    width: 6px;
-    height: 6px;
-    border-radius: 50%;
-    background: #10B981;
-    box-shadow: 0 0 6px #10B981;
-    animation: pulse 2s infinite;
-}
-
-@keyframes pulse {
-    0% { opacity: 1; transform: scale(1); }
-    50% { opacity: 0.4; transform: scale(0.9); }
-    100% { opacity: 1; transform: scale(1); }
-}
-
-/* Cards */
-.glass-card {
+.glass-card,
+.nature-card {
     background: var(--bg-card);
-    border: 1px solid var(--border-color);
-    border-radius: var(--radius);
-    padding: 20px;
-    transition: border-color 0.15s ease, transform 0.15s ease;
-}
-
-.glass-card:hover {
-    border-color: rgba(255, 255, 255, 0.12);
-}
-
-/* CPCB Spectrum Scale Banner */
-.cpcb-spectrum-banner {
-    background: var(--bg-surface);
-    border: 1px solid var(--border-color);
-    border-radius: var(--radius);
-    padding: 14px 18px;
-    margin-bottom: 24px;
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-}
-
-.cpcb-spectrum-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    font-size: 0.78rem;
-    font-weight: 600;
-    color: var(--text-secondary);
-    text-transform: uppercase;
-    letter-spacing: 0.04em;
-}
-
-.cpcb-spectrum-bar {
-    display: grid;
-    grid-template-columns: repeat(6, 1fr);
-    gap: 4px;
-    border-radius: 6px;
+    border: 1px solid var(--border-stone);
+    border-radius: var(--radius-card);
+    padding: 24px 28px;
+    box-shadow: var(--shadow-card);
+    transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+    position: relative;
     overflow: hidden;
 }
 
-.spectrum-segment {
-    padding: 6px 8px;
-    border-radius: 4px;
-    display: flex;
-    flex-direction: column;
-    gap: 2px;
-    transition: filter 0.15s;
-}
-
-.spectrum-segment:hover {
-    filter: brightness(1.15);
-}
-
-.spectrum-title {
-    font-size: 0.72rem;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 0.03em;
-}
-
-.spectrum-range {
-    font-size: 0.68rem;
-    opacity: 0.85;
-    font-weight: 500;
-}
-
-.seg-good { background: rgba(16, 185, 129, 0.18); border: 1px solid rgba(16, 185, 129, 0.35); color: #34D399; }
-.seg-satisfactory { background: rgba(132, 204, 22, 0.18); border: 1px solid rgba(132, 204, 22, 0.35); color: #A3E635; }
-.seg-moderate { background: rgba(245, 158, 11, 0.18); border: 1px solid rgba(245, 158, 11, 0.35); color: #FBBF24; }
-.seg-poor { background: rgba(249, 115, 22, 0.18); border: 1px solid rgba(249, 115, 22, 0.35); color: #FB923C; }
-.seg-very-poor { background: rgba(239, 68, 68, 0.18); border: 1px solid rgba(239, 68, 68, 0.35); color: #F87171; }
-.seg-severe { background: rgba(153, 27, 27, 0.28); border: 1px solid rgba(153, 27, 27, 0.45); color: #FCA5A5; }
-
-/* Filter Tabs / Pills */
-.filter-pills-bar {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    overflow-x: auto;
-    padding-bottom: 8px;
-    margin-bottom: 20px;
-}
-
-.filter-pill {
-    padding: 6px 14px;
-    border-radius: 20px;
-    font-size: 0.82rem;
-    font-weight: 500;
-    text-decoration: none;
-    color: var(--text-secondary);
-    background: var(--bg-surface);
-    border: 1px solid var(--border-color);
-    transition: all 0.15s ease;
-    white-space: nowrap;
-}
-
-.filter-pill:hover {
-    color: var(--text-primary);
-    border-color: rgba(255, 255, 255, 0.18);
-    background: rgba(255, 255, 255, 0.05);
-}
-
-.filter-pill.active {
-    color: #FFFFFF;
-    background: var(--accent);
-    border-color: var(--accent);
-    font-weight: 600;
-    box-shadow: 0 2px 8px rgba(99, 102, 241, 0.3);
-}
-
-/* Stat Cards (KPIs) */
-.stat-card {
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    position: relative;
-    padding: 18px 20px;
-}
-
-.stat-top {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 8px;
-}
-
-.stat-label {
-    font-size: 0.74rem;
-    color: var(--text-muted);
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 0.06em;
-}
-
-.stat-icon {
-    width: 28px;
-    height: 28px;
-    border-radius: 6px;
-    background: rgba(255, 255, 255, 0.04);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: var(--text-secondary);
-}
-
-.stat-value {
-    font-size: 2.1rem;
-    font-weight: 800;
-    letter-spacing: -0.03em;
-    line-height: 1.1;
-    margin-bottom: 6px;
-}
-
-.stat-caption {
-    font-size: 0.75rem;
-    color: var(--text-muted);
-}
-
-/* Grids */
-.grid-4 {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 16px;
-}
-
-.grid-3 {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 16px;
-}
-
-.grid-2 {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 20px;
+.glass-card:hover,
+.nature-card:hover {
+    transform: translateY(-3px);
+    box-shadow: var(--shadow-hover);
+    border-color: rgba(47, 74, 58, 0.25);
 }
 
 /* Section Header */
 .section-title {
     display: flex;
     align-items: center;
-    gap: 9px;
-    font-size: 0.95rem;
-    font-weight: 700;
-    color: var(--text-primary);
-    margin-bottom: 16px;
+    gap: 10px;
+    font-family: 'Fraunces', Georgia, serif;
+    font-size: 1.3rem;
+    font-weight: 600;
+    color: var(--text-ink);
+    margin-bottom: 18px;
     letter-spacing: -0.01em;
 }
 
 .section-title svg {
+    color: var(--primary-forest);
+}
+
+/* Grids */
+.grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; }
+.grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+.grid-2 { display: grid; grid-template-columns: repeat(2, 1fr); gap: 24px; }
+
+/* Stat Cards (KPIs) */
+.stat-card {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 22px 24px;
+}
+
+.stat-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 6px;
+}
+
+.stat-label {
+    font-size: 0.82rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
     color: var(--text-muted);
 }
 
-/* Station Monitoring Card */
+.stat-icon {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: var(--primary-light);
+    color: var(--primary-forest);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.stat-value {
+    font-family: 'Fraunces', Georgia, serif;
+    font-size: 2.5rem;
+    font-weight: 700;
+    line-height: 1;
+    margin: 8px 0 6px 0;
+    color: var(--text-ink);
+}
+
+.stat-caption {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+}
+
+/* ==========================================================================
+   8. STATION MONITORING CARDS
+   ========================================================================== */
 .station-card {
     background: var(--bg-card);
-    border: 1px solid var(--border-color);
-    border-radius: var(--radius);
-    padding: 18px 20px;
+    border: 1px solid var(--border-stone);
+    border-radius: var(--radius-card);
+    padding: 22px 24px;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
     position: relative;
     overflow: hidden;
-    transition: transform 0.15s, border-color 0.15s;
+    transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+    box-shadow: var(--shadow-card);
 }
 
 .station-card:hover {
-    border-color: rgba(255, 255, 255, 0.15);
-    transform: translateY(-2px);
+    transform: translateY(-3px);
+    box-shadow: var(--shadow-hover);
+    border-color: rgba(47, 74, 58, 0.3);
 }
 
-/* Colored Top Strip per AQI Category */
+/* Organic 4px Top Category Indicator Strip */
 .station-strip {
     position: absolute;
     top: 0;
     left: 0;
     right: 0;
-    height: 3px;
+    height: 4px;
 }
 
 .strip-good { background: var(--aqi-good); }
-.strip-satisfactory { background: var(--aqi-satisfactory); }
-.strip-moderate { background: var(--aqi-moderate); }
+.strip-satisfactory { background: var(--aqi-sat); }
+.strip-moderate { background: var(--aqi-mod); }
 .strip-poor { background: var(--aqi-poor); }
-.strip-very-poor { background: var(--aqi-very-poor); }
-.strip-severe { background: var(--aqi-severe); }
+.strip-very-poor { background: var(--aqi-vpoor); }
+.strip-severe { background: var(--aqi-sev); }
 
 .station-header {
     display: flex;
@@ -492,14 +745,15 @@ body {
 }
 
 .station-name {
-    font-size: 1.05rem;
-    font-weight: 700;
-    color: var(--text-primary);
-    margin-bottom: 3px;
+    font-family: 'Fraunces', Georgia, serif;
+    font-size: 1.18rem;
+    font-weight: 600;
+    color: var(--text-ink);
+    margin-bottom: 2px;
 }
 
 .station-location {
-    font-size: 0.78rem;
+    font-size: 0.82rem;
     color: var(--text-muted);
 }
 
@@ -507,132 +761,269 @@ body {
     display: flex;
     justify-content: space-between;
     align-items: baseline;
-    margin: 10px 0 14px 0;
+    margin: 12px 0 16px 0;
 }
 
 .station-aqi-number {
-    font-size: 2.75rem;
-    font-weight: 900;
+    font-family: 'Fraunces', Georgia, serif;
+    font-size: 2.8rem;
+    font-weight: 700;
     line-height: 1;
-    letter-spacing: -0.04em;
+    letter-spacing: -0.02em;
 }
 
 .station-category-badge {
-    padding: 4px 10px;
-    border-radius: 6px;
-    font-size: 0.72rem;
+    padding: 5px 12px;
+    border-radius: var(--radius-pill);
+    font-size: 0.78rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    border: 1px solid currentColor;
+}
+
+.badge-good { background: var(--aqi-good-bg); color: var(--aqi-good-text); border-color: rgba(46, 125, 50, 0.3); }
+.badge-satisfactory { background: var(--aqi-sat-bg); color: var(--aqi-sat-text); border-color: rgba(85, 139, 47, 0.3); }
+.badge-moderate { background: var(--aqi-mod-bg); color: var(--aqi-mod-text); border-color: rgba(178, 106, 0, 0.3); }
+.badge-poor { background: var(--aqi-poor-bg); color: var(--aqi-poor-text); border-color: rgba(191, 54, 12, 0.3); }
+.badge-very-poor { background: var(--aqi-vpoor-bg); color: var(--aqi-vpoor-text); border-color: rgba(167, 29, 42, 0.3); }
+.badge-severe { background: var(--aqi-sev-bg); color: var(--aqi-sev-text); border-color: rgba(88, 24, 69, 0.3); }
+
+.station-meta-row {
+    background: var(--bg-muted);
+    border-radius: var(--radius-sm);
+    padding: 8px 12px;
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.82rem;
+    color: var(--text-earth);
+    margin-bottom: 12px;
+}
+
+.station-card-footer {
+    padding-top: 10px;
+    border-top: 1px solid var(--border-stone);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 0.78rem;
+    color: var(--text-muted);
+}
+
+/* ==========================================================================
+   9. WEATHER WIDGET & WIND COMPASS
+   ========================================================================== */
+.weather-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 14px;
+}
+
+.weather-tile {
+    background: var(--bg-surface);
+    border: 1px solid var(--border-stone);
+    border-radius: var(--radius-sm);
+    padding: 14px 18px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    transition: transform 0.2s ease;
+}
+
+.weather-tile:hover {
+    transform: translateY(-2px);
+}
+
+.wind-compass-wrap {
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    background: var(--primary-light);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.wind-compass-rose {
+    transition: transform 0.6s ease;
+}
+
+/* ==========================================================================
+   10. CPCB SPECTRUM REFERENCE MATRIX
+   ========================================================================== */
+.cpcb-spectrum-banner {
+    background: var(--bg-surface);
+    border: 1px solid var(--border-stone);
+    border-radius: var(--radius-card);
+    padding: 18px 22px;
+    margin-bottom: 28px;
+    box-shadow: var(--shadow-card);
+}
+
+.cpcb-spectrum-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-family: 'Fraunces', Georgia, serif;
+    font-size: 1.05rem;
+    font-weight: 600;
+    color: var(--text-ink);
+    margin-bottom: 12px;
+}
+
+.cpcb-spectrum-bar {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 8px;
+}
+
+.spectrum-segment {
+    padding: 8px 12px;
+    border-radius: 8px;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    border: 1px solid transparent;
+    transition: transform 0.2s ease;
+}
+
+.spectrum-segment:hover {
+    transform: translateY(-2px);
+}
+
+.spectrum-title {
+    font-size: 0.84rem;
     font-weight: 700;
     text-transform: uppercase;
     letter-spacing: 0.04em;
 }
 
-.badge-good { background: rgba(16, 185, 129, 0.15); color: #34D399; border: 1px solid rgba(16, 185, 129, 0.3); }
-.badge-satisfactory { background: rgba(132, 204, 22, 0.15); color: #A3E635; border: 1px solid rgba(132, 204, 22, 0.3); }
-.badge-moderate { background: rgba(245, 158, 11, 0.15); color: #FBBF24; border: 1px solid rgba(245, 158, 11, 0.3); }
-.badge-poor { background: rgba(249, 115, 22, 0.15); color: #FB923C; border: 1px solid rgba(249, 115, 22, 0.3); }
-.badge-very-poor { background: rgba(239, 68, 68, 0.15); color: #F87171; border: 1px solid rgba(239, 68, 68, 0.3); }
-.badge-severe { background: rgba(153, 27, 27, 0.25); color: #FCA5A5; border: 1px solid rgba(153, 27, 27, 0.4); }
-
-.station-meta-row {
-    background: rgba(255, 255, 255, 0.02);
-    border-radius: 6px;
-    padding: 7px 10px;
-    display: flex;
-    justify-content: space-between;
-    font-size: 0.74rem;
-    color: var(--text-secondary);
-    margin-bottom: 12px;
-    border: 1px solid var(--border-subtle);
-}
-
-.station-meta-row strong {
-    color: var(--text-primary);
-}
-
-.station-card-footer {
-    padding-top: 10px;
-    border-top: 1px solid var(--border-subtle);
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
+.spectrum-range {
     font-size: 0.72rem;
-    color: var(--text-muted);
+    font-family: 'JetBrains Mono', monospace;
+    opacity: 0.9;
 }
 
-/* Severity Badges for Alerts */
-.sev-critical { background: rgba(239, 68, 68, 0.15); color: #F87171; border: 1px solid rgba(239, 68, 68, 0.3); }
-.sev-high { background: rgba(249, 115, 22, 0.15); color: #FB923C; border: 1px solid rgba(249, 115, 22, 0.3); }
-.sev-medium { background: rgba(245, 158, 11, 0.15); color: #FBBF24; border: 1px solid rgba(245, 158, 11, 0.3); }
-.sev-low { background: rgba(16, 185, 129, 0.15); color: #34D399; border: 1px solid rgba(16, 185, 129, 0.3); }
+.seg-good { background: var(--aqi-good-bg); color: var(--aqi-good-text); border-color: rgba(46, 125, 50, 0.25); }
+.seg-satisfactory { background: var(--aqi-sat-bg); color: var(--aqi-sat-text); border-color: rgba(85, 139, 47, 0.25); }
+.seg-moderate { background: var(--aqi-mod-bg); color: var(--aqi-mod-text); border-color: rgba(178, 106, 0, 0.25); }
+.seg-poor { background: var(--aqi-poor-bg); color: var(--aqi-poor-text); border-color: rgba(191, 54, 12, 0.25); }
+.seg-very-poor { background: var(--aqi-vpoor-bg); color: var(--aqi-vpoor-text); border-color: rgba(167, 29, 42, 0.25); }
+.seg-severe { background: var(--aqi-sev-bg); color: var(--aqi-sev-text); border-color: rgba(88, 24, 69, 0.25); }
 
-/* Tables */
+/* Quick Filter Pills */
+.filter-pills-bar {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    overflow-x: auto;
+    padding-bottom: 8px;
+    margin-bottom: 22px;
+}
+
+.filter-pill {
+    padding: 7px 18px;
+    border-radius: var(--radius-pill);
+    font-size: 0.88rem;
+    font-weight: 600;
+    text-decoration: none;
+    color: var(--text-earth);
+    background: var(--bg-surface);
+    border: 1px solid var(--border-stone);
+    transition: all 0.2s ease;
+    white-space: nowrap;
+}
+
+.filter-pill:hover {
+    color: var(--primary-forest);
+    border-color: var(--primary-moss);
+    background: var(--primary-light);
+    transform: translateY(-1px);
+}
+
+.filter-pill.active {
+    color: #FFFFFF;
+    background: var(--primary-forest);
+    border-color: var(--primary-forest);
+    box-shadow: 0 4px 12px rgba(47, 74, 58, 0.2);
+}
+
+/* ==========================================================================
+   11. DATA TABLES & EDITORIAL STYLING
+   ========================================================================== */
 .data-table {
     width: 100%;
     border-collapse: separate;
     border-spacing: 0;
-    font-size: 0.88rem;
+    font-size: 0.9rem;
 }
 
 .data-table th {
     text-align: left;
-    padding: 10px 14px;
-    color: var(--text-muted);
-    font-size: 0.72rem;
+    padding: 12px 18px;
+    color: var(--text-forest);
+    font-family: 'Fraunces', Georgia, serif;
+    font-size: 0.88rem;
     font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-    border-bottom: 1px solid var(--border-color);
-    background: rgba(255, 255, 255, 0.02);
+    border-bottom: 2px solid var(--border-stone);
+    background: var(--bg-muted);
 }
 
-.data-table th:first-child { border-top-left-radius: 6px; }
-.data-table th:last-child { border-top-right-radius: 6px; }
+.data-table th:first-child { border-top-left-radius: 12px; }
+.data-table th:last-child { border-top-right-radius: 12px; }
 
 .data-table td {
-    padding: 12px 14px;
-    border-bottom: 1px solid var(--border-subtle);
-    color: var(--text-secondary);
+    padding: 14px 18px;
+    border-bottom: 1px solid var(--border-stone);
+    color: var(--text-earth);
+}
+
+.data-table tr:nth-child(even) td {
+    background: rgba(234, 230, 219, 0.25);
 }
 
 .data-table tr:hover td {
-    background: rgba(255, 255, 255, 0.03);
-    color: var(--text-primary);
+    background: var(--primary-light);
+    color: var(--text-ink);
 }
 
-/* Forms */
+/* ==========================================================================
+   12. FORMS & INPUTS (Calm, Natural Styling)
+   ========================================================================== */
 .form-group {
-    margin-bottom: 16px;
+    margin-bottom: 20px;
 }
 
 .form-group label {
     display: block;
     margin-bottom: 6px;
-    font-size: 0.82rem;
+    font-size: 0.85rem;
     font-weight: 600;
-    color: var(--text-secondary);
+    color: var(--text-ink);
 }
 
 .form-control {
     width: 100%;
-    padding: 9px 12px;
+    padding: 11px 16px;
     background: var(--bg-input);
-    border: 1px solid var(--border-color);
+    border: 1px solid var(--border-stone);
     border-radius: var(--radius-sm);
-    color: var(--text-primary);
-    font-size: 0.88rem;
+    color: var(--text-ink);
+    font-size: 0.95rem;
     font-family: inherit;
-    transition: all 0.15s;
+    transition: all 0.2s ease;
 }
 
 .form-control:focus {
     outline: none;
-    border-color: var(--border-focus);
-    box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2);
+    border-color: var(--primary-forest);
+    box-shadow: 0 0 0 3px rgba(47, 74, 58, 0.15);
 }
 
 select.form-control option {
     background: var(--bg-surface);
-    color: var(--text-primary);
+    color: var(--text-ink);
 }
 
 /* Buttons */
@@ -640,125 +1031,159 @@ select.form-control option {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    gap: 7px;
-    padding: 8px 16px;
-    border-radius: var(--radius-sm);
-    font-size: 0.85rem;
+    gap: 8px;
+    padding: 10px 22px;
+    border-radius: var(--radius-pill);
+    font-size: 0.9rem;
     font-weight: 600;
     cursor: pointer;
     text-decoration: none;
-    transition: all 0.15s;
+    transition: all 0.2s ease;
     border: none;
 }
 
 .btn-primary {
-    background: var(--accent);
+    background: var(--primary-forest);
     color: #FFFFFF;
+    box-shadow: 0 4px 14px rgba(47, 74, 58, 0.2);
 }
 
 .btn-primary:hover {
-    background: var(--accent-hover);
-    box-shadow: 0 2px 10px rgba(99, 102, 241, 0.3);
+    background: var(--primary-hover);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 18px rgba(47, 74, 58, 0.3);
 }
 
 .btn-outline {
     background: transparent;
-    border: 1px solid var(--border-color);
-    color: var(--text-primary);
+    border: 1px solid var(--border-stone);
+    color: var(--text-ink);
 }
 
 .btn-outline:hover {
-    border-color: rgba(255, 255, 255, 0.2);
-    background: rgba(255, 255, 255, 0.04);
+    border-color: var(--primary-forest);
+    background: var(--primary-light);
+    color: var(--primary-forest);
+    transform: translateY(-1px);
 }
-
-.btn-sm {
-    padding: 5px 10px;
-    font-size: 0.78rem;
-}
-
-/* Alerts and Banners */
-.alert-banner {
-    padding: 12px 16px;
-    border-radius: var(--radius-sm);
-    margin-bottom: 18px;
-    font-size: 0.85rem;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-}
-
-.alert-success { background: rgba(16, 185, 129, 0.12); border: 1px solid rgba(16, 185, 129, 0.3); color: #34D399; }
-.alert-error { background: rgba(239, 68, 68, 0.12); border: 1px solid rgba(239, 68, 68, 0.3); color: #F87171; }
-.alert-warning { background: rgba(245, 158, 11, 0.12); border: 1px solid rgba(245, 158, 11, 0.3); color: #FBBF24; }
 
 /* Tabs */
 .tabs {
     display: flex;
-    gap: 6px;
-    border-bottom: 1px solid var(--border-color);
-    margin-bottom: 20px;
+    gap: 8px;
+    border-bottom: 1px solid var(--border-stone);
+    margin-bottom: 24px;
+    overflow-x: auto;
 }
 
 .tab-btn {
     background: transparent;
     border: none;
-    padding: 9px 16px;
+    padding: 10px 18px;
     color: var(--text-muted);
-    font-size: 0.85rem;
+    font-family: 'Fraunces', Georgia, serif;
+    font-size: 0.95rem;
     font-weight: 600;
     cursor: pointer;
-    position: relative;
-    transition: all 0.15s;
     text-decoration: none;
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    border-bottom: 2px solid transparent;
+    border-bottom: 3px solid transparent;
+    transition: all 0.2s ease;
 }
 
 .tab-btn:hover {
-    color: var(--text-primary);
+    color: var(--primary-forest);
 }
 
 .tab-btn.active {
-    color: #FFFFFF;
-    border-bottom-color: var(--accent);
+    color: var(--primary-forest);
+    border-bottom-color: var(--primary-forest);
 }
 
-/* Team Footer */
+/* Alert Banners */
+.alert-banner {
+    padding: 14px 18px;
+    border-radius: var(--radius-sm);
+    margin-bottom: 22px;
+    font-size: 0.9rem;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    border: 1px solid transparent;
+}
+
+.alert-success { background: var(--aqi-good-bg); color: var(--aqi-good-text); border-color: rgba(46, 125, 50, 0.3); }
+.alert-error { background: var(--aqi-vpoor-bg); color: var(--aqi-vpoor-text); border-color: rgba(167, 29, 42, 0.3); }
+.alert-warning { background: var(--aqi-mod-bg); color: var(--aqi-mod-text); border-color: rgba(178, 106, 0, 0.3); }
+
+/* Operational Status Dot */
+.status-indicator {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.78rem;
+    font-weight: 600;
+    color: var(--primary-forest);
+    background: var(--primary-light);
+    padding: 4px 10px;
+    border-radius: var(--radius-pill);
+    border: 1px solid rgba(47, 74, 58, 0.15);
+}
+
+.pulse-dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: var(--primary-forest);
+    box-shadow: 0 0 6px var(--primary-forest);
+    animation: gentlePulse 2.2s infinite;
+}
+
+@keyframes gentlePulse {
+    0%   { opacity: 1; transform: scale(1); }
+    50%  { opacity: 0.4; transform: scale(0.85); }
+    100% { opacity: 1; transform: scale(1); }
+}
+
+/* ==========================================================================
+   13. LANDSCAPE SILHOUETTE FOOTER
+   ========================================================================== */
 .team-footer {
-    border-top: 1px solid var(--border-color);
-    padding: 20px 28px;
-    background: var(--bg-surface);
+    position: relative;
+    border-top: 1px solid var(--border-stone);
+    padding: 36px 36px 28px 36px;
+    background: var(--bg-muted);
     display: flex;
     justify-content: space-between;
     align-items: center;
-    font-size: 0.82rem;
-    color: var(--text-muted);
+    font-size: 0.88rem;
+    color: var(--text-earth);
     flex-wrap: wrap;
-    gap: 12px;
+    gap: 16px;
+    margin-top: auto;
 }
 
 .team-members {
     display: flex;
-    gap: 8px;
+    gap: 10px;
     align-items: center;
-    font-weight: 500;
-    color: var(--text-secondary);
+    font-weight: 600;
+    color: var(--primary-forest);
 }
 
-/* Responsive adjustments */
+/* Responsive */
 @media (max-width: 1024px) {
     .grid-4 { grid-template-columns: repeat(2, 1fr); }
     .grid-3 { grid-template-columns: repeat(2, 1fr); }
+    .hero-content { grid-template-columns: 1fr; }
     .cpcb-spectrum-bar { grid-template-columns: repeat(3, 1fr); }
 }
 
 @media (max-width: 768px) {
     .grid-4, .grid-3, .grid-2 { grid-template-columns: 1fr; }
-    .navbar { padding: 0 16px; }
-    .page { padding: 16px; }
+    .navbar { padding: 0 18px; }
+    .page { padding: 20px 18px 48px 18px; }
     .cpcb-spectrum-bar { grid-template-columns: repeat(2, 1fr); }
     .team-footer { flex-direction: column; align-items: flex-start; }
+    .gauge-container { flex-direction: column; text-align: center; }
 }
